@@ -122,8 +122,7 @@ export const data={
         "channelStaffLen":11,
         "channelStartWeiGui":1,
         "channelOrderNum":"233",
-        "staffHandleInfo":{
-            "map_201912311524067392":[
+        "staffHandleInfo":[[
                 {
                     "staffCode":"9901500010",
                     "index":1,
@@ -159,8 +158,8 @@ export const data={
                     "powerStatus": "10",
 
                 }
-            ],
-            "map_201912311524064349":[
+        ],
+            [
                 {
                     "staffCode":"NJ11032099",
                     "index":3,
@@ -253,7 +252,7 @@ export const data={
                     "staffName":"李赢"
                 }
             ]*/
-        },
+        ],
         "staffWgInfo":{
             "NJ11032500":0,
             "NJ36038678":0,

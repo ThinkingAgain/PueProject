@@ -4,6 +4,8 @@ import TopMiddleDiagram from './Component/TopMiddleDiagram'
 import PUE from "./Component/PUE";
 import StationInfo from "./Component/StationInfo";
 import { data } from './mock/mockData'
+import BottomMiddleDiagram from "./Component/BottomMiddleDiagram";
+import BottomRightDiagram from "./Component/BottomRightDiagram";
 //import reactLogo from './assets/react.svg'
 //import viteLogo from '/vite.svg'
 //import './App.css'
@@ -137,6 +139,12 @@ function App() {
                 </div>
                 <div className="col-sm-3 col-md-3 pd">
                     <StationInfo stationInfoData={stationInfoData} />
+                </div>
+                <div className="col-sm-5 col-md-5 pd time-step-col">
+                    <BottomMiddleDiagram diagramData={{title: "能耗变化情况", data: data.businessTypeAnalysis}} />
+                </div>
+                <div className="col-sm-4 col-md-4 pd business-type-time-col">
+                    <BottomRightDiagram diagramData={{title: "空调运行同比分析", data: data.timeStepAnalysis}} />
                 </div>
             </div>
             
