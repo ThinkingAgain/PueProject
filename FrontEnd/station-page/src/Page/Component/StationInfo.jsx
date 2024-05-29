@@ -18,10 +18,10 @@ export default function StationInfo({ stationInfoData }) {
             <div className="title">{title}</div>
             <div className="content staff-info" id="staff-info">
                 <div className='swiper-container visual_swiper_staffInfo'>
-                    <div className='swiper-wrapper'>
+                    <div className='swiper-wrapper' >
                         {data.staffHandleInfo &&
                         data.staffHandleInfo.map((item, index) =>
-                            <div className="swiper-slide">
+                            <div id={"stationInfoMap" + index} className="swiper-slide">
                                 <table>
                                     {/* tr1=========================*/}
                                     <tr className="td-avg-time">
@@ -32,7 +32,7 @@ export default function StationInfo({ stationInfoData }) {
                                             <div className="avg-time-value">{item[0].unicom}</div>
                                             <div className="avg-time-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;移动</div>
                                             <div className="avg-time-value">{item[0].mobil}</div>
-                                            <div className="avg-time-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联通</div>
+                                            <div className="avg-time-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;电信</div>
                                             <div className="avg-time-value">{item[0].tele}</div>
                                         </td>
                                     </tr>
@@ -41,7 +41,7 @@ export default function StationInfo({ stationInfoData }) {
                                             <div className="staff-cust-time">
                                                 <span style={{fontSize:'15px'}}>{item[0].powerTypeLabel}</span>
                                                 <br/>
-                                                <span style={{color:'#00A8FE',fontSize:'18px',fontWeight:600}}>{item[0].powerType}</span>
+                                                <span style={{color:'#00A8FE',fontSize:'18px',fontWeight:600,whiteSpace:"nowrap", overflow:"hidden"}}>{item[0].powerType}</span>
                                             </div>
                                         </td>
                                         <td>
@@ -86,14 +86,14 @@ export default function StationInfo({ stationInfoData }) {
                                             <div className="staff-cust-time">
                                                 <span style={{fontSize:'15px'}}>{item[1].departmentLabel}</span>
                                                 <br/>
-                                                <span style={{color:'#00A8FE',fontSize:'18px',fontWeight:600}}>{item[1].department}</span>
+                                                <span style={{color:'#00A8FE',fontSize:'18px',fontWeight:600, whiteSpace:"nowrap", overflow:"hidden"}}>{item[1].department}</span>
                                             </div>
                                         </td>
                                         <td>
                                             <div className="staff-order-count">
                                                 <span style={{fontSize:'15px'}}>{item[1].maintainerLabel}</span>
                                                 <br/>
-                                                <span style={{color:'#00A8FE',fontSize:'18px',fontWeight:600}}>{item[1].maintainer}</span>
+                                                <span style={{color:'#00A8FE',fontSize:'18px',fontWeight:600, whiteSpace:"nowrap", overflow:"hidden"}}>{item[1].maintainer}</span>
                                             </div>
                                         </td>
                                         <td>
@@ -107,7 +107,7 @@ export default function StationInfo({ stationInfoData }) {
                                     <tr className="td-integral">
                                         <td colSpan="3">
                                             <div className="integral-label">站址编码：</div>
-                                            <div className="integral-value">{item[1].siteCode}</div>
+                                            <div className="integral-value" style={{overflow:"hidden"}}>{item[1].siteCode}</div>
                                             <div className="integral-label" style={{width:'60px'}}>能耗状态:</div>
                                             <div className="integral-value"
                                                  style={{width:'100px'}}>&nbsp;&nbsp;{item[1].powerStatus}

@@ -21,12 +21,15 @@ namespace PUMS.Controllers
         public ActionResult<EnergyData> EnergyData(string siteId, string meterId,
             string? checkMonth)
         {
+            
             var query = _datasContext.EnergyDatas
                 .Where(e => e.SiteID == siteId && e.MeterID == meterId);
 
-            return string.IsNullOrEmpty(checkMonth) ? 
-                query.OrderByDescending(e => e.CheckMonth).First()
-                : query.Where(e => e.CheckMonth == checkMonth).First();
+            return (string.IsNullOrEmpty(checkMonth) ?
+                query.OrderByDescending(e => e.CheckMonth).FirstOrDefault()
+                : query.Where(e => e.CheckMonth == checkMonth).FirstOrDefault())
+                ?? new Models.EnergyData();
+
         }
 
         #region 测试
