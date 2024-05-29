@@ -42,7 +42,7 @@ export default function PUE({ pueData }) {
                                     <table>
                                         <tr>
                                             <td rowSpan="3" className="device-img">
-                                                <img src="./static/images/device-green.png"/>
+                                                <img src="/static/images/device-green.png"/>
                                             </td>
                                             <td>
                                                 <div className="label-name"><b>P • U • E</b></div>
