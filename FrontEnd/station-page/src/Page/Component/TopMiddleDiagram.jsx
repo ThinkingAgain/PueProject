@@ -1,4 +1,5 @@
 import {useEffect} from "react";
+import {getRealTimedatasById} from "../../Service/getDatas";
 
 
 export default function TopMiddleDiagram ({ diagramData } ) {
@@ -114,6 +115,21 @@ export default function TopMiddleDiagram ({ diagramData } ) {
         const myChart = echarts.init(document.getElementById('channel_handle_detail'));
         myChart.clear();
         myChart.setOption(option);
+
+        //const randomx = () => Math.floor(Math.random() * 7);
+        //const iconx = ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow']
+        const fetchDiagramData =  () => {
+            //const data = await getRealTimedatasById(siteID);
+
+            const x = randomx();
+            option.legend.icon = iconx[x]
+            console.log(option)
+            //myChart.clear()
+            myChart.setOption(option)
+        }
+        const diagramIntervalId = setInterval(fetchDiagramData, 10000);
+
+        return () => clearInterval(diagramIntervalId);
 
     }, [title])
     return (

@@ -10,7 +10,7 @@
         public float PUE { get; set; }
         public Dictionary<string, float> TagCurrents { get; set; }
 
-        public Dictionary<string, float> Proportions { get; set; }
+        public Dictionary<string, float> Proportions { get; set; } = new Dictionary<string, float>();
 
     }
 }

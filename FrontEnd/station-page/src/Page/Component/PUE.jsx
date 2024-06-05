@@ -1,8 +1,9 @@
 import {useEffect} from "react";
 
 export default function PUE({ pueData }) {
-    const { title, data } = pueData
-
+    const { title, data, realTimeData } = pueData
+    //console.log("data: \n", data)
+    //console.log("realtimedata: \n", realTimeData)
     useEffect(() => {
         const mySwiper1 = new Swiper('.visual_swiper_deviceInfo', {
             //autoplay: true,//可选选项，自动滑动
@@ -48,7 +49,7 @@ export default function PUE({ pueData }) {
                                                 <div className="label-name"><b>P • U • E</b></div>
                                             </td>
                                             <td rowSpan="3" colSpan="2" className="kuan-dai">
-                                                <div className="progress-label">机房配电输入电流 {item.stationCurrent}</div>
+                                                <div className="progress-label">机房配电输入电流 {realTimeData.tagCurrents.PRODUCT.toFixed(1)}A</div>
                                                 <div style={{width:'180px', height:'15px'}}>
                                                     <div className="progress"
                                                          style={{float:'left', height:'8px', width:'180px', backgroundColor:'#383E60'}}>
@@ -56,7 +57,7 @@ export default function PUE({ pueData }) {
                                                              style={{minWidth:0, width:'100%'}}></div>
                                                     </div>
                                                 </div>
-                                                <div className="progress-label">开关电源输入电流 {item.deviceCurrent}</div>
+                                                <div className="progress-label">开关电源输入电流 {realTimeData.tagCurrents.DEVICE.toFixed(1)}A</div>
                                                 <div style={{width:'180px', height:'15px'}}>
                                                     <div className="progress"
                                                          style={{float:'left', height:'8px', width:'180px', backgroundColor:'#383E60'}}>
@@ -67,7 +68,7 @@ export default function PUE({ pueData }) {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td className="label-name score">{item.pue}</td>
+                                            <td className="label-name score">{realTimeData.pue.toFixed(2)}</td>
                                         </tr>
                                         <tr>
                                             <td className="label-name">
@@ -79,51 +80,53 @@ export default function PUE({ pueData }) {
                                         <tr className="device-use">
                                             <td></td>
                                             <td>
-                                                <div className="nei-cun-size"><span>{item.dcv || 0}</span></div>
+                                                <div className="nei-cun-size"><span>{`${realTimeData.proportions.PRODUCT.toFixed(3) * 100}%` || 0}</span></div>
                                             </td>
                                             <td>
-                                                <div className="cpu-use"><span>{item.loadCurrent}</span></div>
+                                                <div className="cpu-use"><span>{`${realTimeData.proportions.OFFICE.toFixed(3) * 100}%` || 0}</span></div>
                                             </td>
                                             <td>
-                                                <div className="nei-cun-use"><span>{item.airConditionerStatus}</span>
+                                                <div className="nei-cun-use"><span>{`${realTimeData.proportions.BUSINESS.toFixed(3) * 100}%` || 0}</span>
                                                 </div>
                                             </td>
+
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td>
-                                                <div className="labe-value">&nbsp;&nbsp;直 流 电 压</div>
+                                                <div className="labe-value">&nbsp;&nbsp;生 产 耗 能</div>
                                             </td>
                                             <td>
-                                                <div className="labe-value">&nbsp;&nbsp;负 载 电 流</div>
+                                                <div className="labe-value">&nbsp;&nbsp;办 公 耗 能</div>
                                             </td>
                                             <td>
-                                                <div className="labe-value">&nbsp;&nbsp;空 调 状 态</div>
+                                                <div className="labe-value">&nbsp;&nbsp;经 营 耗 能</div>
                                             </td>
+
                                         </tr>
                                         <tr className="device-use">
                                             <td></td>
                                             <td>
-                                                <div className="nei-cun-size"><span>{item.temperature || 0}</span></div>
+                                                <div className="nei-cun-size"><span>{`${realTimeData.proportions.LEASE.toFixed(3) * 100}%` || 0}</span></div>
                                             </td>
                                             <td>
-                                                <div className="cpu-use"><span>{item.humidity}</span></div>
+                                                <div className="cpu-use"><span>{item.temperature || 0}</span></div>
                                             </td>
                                             <td>
                                                 <div className="nei-cun-use">
-                                                    <span>{item.airConfidtrionerTemperature}</span></div>
+                                                    <span>{item.airConditionerStatus}</span></div>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td>
+                                                <div className="labe-value">&nbsp;&nbsp;外 租 耗 能</div>
+                                            </td>
+                                            <td>
                                                 <div className="labe-value">&nbsp;&nbsp;机 房 温 度</div>
                                             </td>
                                             <td>
-                                                <div className="labe-value">&nbsp;&nbsp;机 房 湿 度</div>
-                                            </td>
-                                            <td>
-                                                <div className="labe-value">&nbsp;&nbsp;回 风 温 度</div>
+                                                <div className="labe-value">&nbsp;&nbsp;空 调 状 态</div>
                                             </td>
                                         </tr>
                                     </table>

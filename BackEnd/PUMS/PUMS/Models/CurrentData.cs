@@ -10,19 +10,19 @@ namespace PUMS.Models
     {
         [Display(Name = "采集机房")]
         [Column("roomid")]
-        public string? RoomID { get; set; }
+        public string RoomID { get; set; } = string.Empty;
 
         [Display(Name = "时间")]
         [Column("timestr")]
-        public string? TimeStr { get; set; }
+        public string TimeStr { get; set; } = string.Empty;
 
         [Display(Name = "数据类型")]
         [Column("dtype")]
-        public string? DType { get; set; }
+        public string DType { get; set; } = string.Empty;
 
         [Display(Name = "数据标签")]
         [Column("tag")]
-        public string? Tag { get; set; }
+        public string Tag { get; set; } = string.Empty;
 
         [Display(Name = "电流值")]
         [Column("current")]

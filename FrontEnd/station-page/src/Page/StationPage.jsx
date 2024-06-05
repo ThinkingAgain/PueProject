@@ -7,7 +7,7 @@ import StationInfo from "./Component/StationInfo";
 import { data as mockData } from '../mock/mockData'
 import BottomMiddleDiagram from "./Component/BottomMiddleDiagram";
 import BottomRightDiagram from "./Component/BottomRightDiagram";
-import {getLatestEnerydataById} from "../Service/getDatas";
+import {getLatestEnerydataById, getRealTimedatasById} from "../Service/getDatas";
 
 export async  function stationLoader({params}) {
     const {siteId, meterId} = params
@@ -17,7 +17,7 @@ export async  function stationLoader({params}) {
 function StationPage() {
     // 获取数据 更新状态====================================================
     const stationData = useLoaderData();
-    console.log(stationData);
+    //console.log('stationData');
     const { site, alarmReason, checkMonth, lastMeterReadingTime, currentMeterReadingTime,
         consumptionCheck, paymentCheck, currentPrice, lastConsumption, consumptionDailyCheck,
         production, business, office, scalar, superscalar, cuccShareRatio, cmccShareRatio,
@@ -49,8 +49,9 @@ function StationPage() {
       });
   // PUE数据
   const [pueData, setPueData] = useState({
-      title: "动环数据",
-      data: mockData.pueData
+      title: "实时数据",
+      data: mockData.pueData,
+      realTimeData: mockData.realTimeData,
   })
   // 站点信息
   const [stationInfoData, setStationInfoData] = useState({
@@ -215,15 +216,13 @@ function StationPage() {
 
   // useEffect
   useEffect(() => {
-      /*const siteId = '146167'
-      const meterId = '276709'
-      const fetchData = async () => {
-          const data = await getLatestEnerydataById(siteId, meterId);
-          console.log(data)
-      }*/
-      //fetchData().catch(console.error)
+      const fetchRealTimeDatas = async () => {
+          const data = await getRealTimedatasById(siteID);
+          setPueData(pueData =>{return {...pueData, realTimeData: data}})
+      }
+      const realTimeDatasIntervalId = setInterval(fetchRealTimeDatas, 5000);
 
-
+      return () => clearInterval(realTimeDatasIntervalId);
 
     }, [])
 
@@ -279,7 +278,7 @@ function StationPage() {
     <>
         <div className="container-fluid container-bg office-efficiency-index">
             <div className="row  office-header">
-                <div className="col-sm-12 col-md-12 pd  title-info">{station.name} 能耗运营分析</div>
+                <div className="col-sm-12 col-md-12 pd  title-info">{station.name} 能耗综合分析</div>
                 <div className="col-sm-5  col-md-5 pd analysis-info">{energyData.alarm}</div>
                 <div className="col-sm-7  col-md-7 pd analysis-filter">
                     <table style={{width: '100%', height: '48px'}}>

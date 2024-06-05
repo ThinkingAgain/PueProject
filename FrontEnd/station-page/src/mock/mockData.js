@@ -513,5 +513,25 @@ export const data={
             "7.36",
             "0.00"
         ]
+    },
+    "realTimeData": {
+        "siteID": "",
+        "roomID": "",
+        "site": "",
+        "timeStr": "",
+        "pue": 1.1234,
+        "tagCurrents": {
+            "DEVICE": 79.2949,
+            "LEASE": 25,
+            "OFFICE": 27.7455,
+            "PRODUCT": 92.2545,
+            "TOTAL": 145
+        },
+        "proportions": {
+            "PRODUCT": 0.6362379,
+            "OFFICE": 0.19134828,
+            "BUSINESS": 0,
+            "LEASE": 0.1724138
+        }
     }
 }

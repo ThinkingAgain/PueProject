@@ -39,8 +39,9 @@ namespace PUMS.Services.Tests
             var service = new Service(_context);
             var siteId = "146503";  // 白洼驻地
             var data = await service.getSiteRealTimeDataAsync(siteId);
-            Assert.IsTrue(data is List<CurrentData>);
-            //Assert.AreEqual("聊白洼机房", data.RoomID);
+            Assert.IsTrue(data is RealTimeData);
+            Assert.AreEqual("聊白洼机房", data.RoomID);
+            
             await Console.Out.WriteLineAsync("hello Test");
             //Assert.AreEqual("146503", data.SiteID);
         }

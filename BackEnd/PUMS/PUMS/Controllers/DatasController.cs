@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PUMS.Data;
 using PUMS.Models;
+using PUMS.Services;
 
 namespace PUMS.Controllers
 {
@@ -9,11 +10,13 @@ namespace PUMS.Controllers
     [ApiController]
     public class DatasController : ControllerBase
     {
-        private readonly DatasContext _datasContext; 
+        private readonly DatasContext _datasContext;
+        private readonly Service _service;
 
-        public DatasController(DatasContext datasContext)
+        public DatasController(DatasContext datasContext, Service service)
         {
             _datasContext = datasContext;
+            _service = service;
         }
 
         [HttpGet("energydata/{siteId}/{meterId}")]
@@ -32,11 +35,20 @@ namespace PUMS.Controllers
 
         }
 
+        [HttpGet("collectdatas/realtimedata/{siteId}")]
+        public async Task<ActionResult<RealTimeData>> GetRealTimeDataAsync(string siteId)
+        {
+            return await _service.getSiteRealTimeDataAsync(siteId);
+        }
+
         #region 测试
         [HttpGet("test")]
-        public ActionResult<EnergyData> Test() 
-        { 
-            return _datasContext.EnergyDatas.First();
+        public IActionResult Test() 
+        {
+
+            string[] tt = ["a", "b"];
+            float[] t2 = [1.1f, 2.2f];
+            return Ok(new { message="ok", content = t2 });
         }
         #endregion
 
