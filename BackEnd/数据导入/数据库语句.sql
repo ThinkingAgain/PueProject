@@ -129,9 +129,29 @@ IGNORE 1 ROWS;
 CREATE TABLE todos
     (
         timestr    varchar(30) not null ,
-        dtype  varchar(30) not null,  /* hour/day/month */
-        status    varchar(30) ,  /* 完成/无数据/未完成 */
+        dtype  varchar(30) not null,  /* HOUR/DAY/MONTH */
+        status    varchar(30) ,  /* COMPLETED/NODATAS/UNCOMPLETED */
         primary key (timestr, dtype)
 	);
   
 
+/* current_datas   存储采集及计算汇总的电流值 */
+CREATE TABLE current_datas
+    (
+        roomid  varchar(60) not null ,
+		timestr    varchar(30) not null ,
+        dtype  varchar(30) not null,  /* HOUR/DAY */
+        tag   varchar(200) not null,  /* TOTAL/PRODUCT/DEVICE/BUSINESS/OFFICE/LEASE */
+		current		float,
+        primary key (roomid,timestr,dtype,tag)
+	);
+	
+
+/* site_rooms   存储能源系统和采集系统的站点对应关系 */
+CREATE TABLE site_rooms
+    (
+        site_id varchar(60) not null,
+		roomid  varchar(60) not null ,
+		site    varchar(200),      
+        primary key (site_id,roomid)
+	);

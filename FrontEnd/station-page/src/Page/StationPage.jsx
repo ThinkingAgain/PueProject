@@ -7,7 +7,7 @@ import StationInfo from "./Component/StationInfo";
 import { data as mockData } from '../mock/mockData'
 import BottomMiddleDiagram from "./Component/BottomMiddleDiagram";
 import BottomRightDiagram from "./Component/BottomRightDiagram";
-import {getLatestEnerydataById} from "../Service/getDatas";
+import {getLatestEnerydataById, getRealTimedatasById} from "../Service/getDatas";
 
 export async  function stationLoader({params}) {
     const {siteId, meterId} = params
@@ -17,7 +17,7 @@ export async  function stationLoader({params}) {
 function StationPage() {
     // 获取数据 更新状态====================================================
     const stationData = useLoaderData();
-    console.log(stationData);
+    //console.log('stationData');
     const { site, alarmReason, checkMonth, lastMeterReadingTime, currentMeterReadingTime,
         consumptionCheck, paymentCheck, currentPrice, lastConsumption, consumptionDailyCheck,
         production, business, office, scalar, superscalar, cuccShareRatio, cmccShareRatio,
@@ -26,7 +26,7 @@ function StationPage() {
         transferStatus, payBehalfStatus, serviceCenter, gridName, responsiblePhone2} = stationData
 
   // 站点管理数据
-  const [station, setStation] = useState({name: site});
+  const [station, setStation] = useState({name: site, siteID: siteID});
   // 能源系统数据
   const [energyData, setEnergyData] = useState(
       {
@@ -49,8 +49,9 @@ function StationPage() {
       });
   // PUE数据
   const [pueData, setPueData] = useState({
-      title: "动环数据",
-      data: mockData.pueData
+      title: "实时数据",
+      data: mockData.pueData,
+      realTimeData: mockData.realTimeData,
   })
   // 站点信息
   const [stationInfoData, setStationInfoData] = useState({
@@ -215,15 +216,14 @@ function StationPage() {
 
   // useEffect
   useEffect(() => {
-      /*const siteId = '146167'
-      const meterId = '276709'
-      const fetchData = async () => {
-          const data = await getLatestEnerydataById(siteId, meterId);
+      const fetchRealTimeDatas = async () => {
+          const data = await getRealTimedatasById(siteID);
           console.log(data)
-      }*/
-      //fetchData().catch(console.error)
+          setPueData(pueData =>{return {...pueData, realTimeData: data}})
+      }
+      const realTimeDatasIntervalId = setInterval(fetchRealTimeDatas, 5000);
 
-
+      return () => clearInterval(realTimeDatasIntervalId);
 
     }, [])
 
@@ -279,7 +279,7 @@ function StationPage() {
     <>
         <div className="container-fluid container-bg office-efficiency-index">
             <div className="row  office-header">
-                <div className="col-sm-12 col-md-12 pd  title-info">{station.name} 能耗运营分析</div>
+                <div className="col-sm-12 col-md-12 pd  title-info">{station.name} 能耗综合分析</div>
                 <div className="col-sm-5  col-md-5 pd analysis-info">{energyData.alarm}</div>
                 <div className="col-sm-7  col-md-7 pd analysis-filter">
                     <table style={{width: '100%', height: '48px'}}>
@@ -293,7 +293,7 @@ function StationPage() {
                                 </td>
                                 <td style={{width: '15%'}}>
                                     <div className="cust-type-default right" onClick={test} type="2">监测控制</div>
-                                    <div className="cust-type-default left active" type="1">PUE分析</div>
+                                    <div className="cust-type-default left active" type="1">能耗分析</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -307,7 +307,8 @@ function StationPage() {
                     <Energy energyData={energyData}/>
                 </div>
                 <div className="col-sm-6 col-md-6 pd">
-                    <TopMiddleDiagram diagramData={{title: "PUE数据变化情况", data: mockData.channelHandleInfo}}/>
+                    <TopMiddleDiagram station={station} diagramData={{title: "日用电变化情况",
+                        currentSeries: mockData.currentSeries}}/>
                 </div>
                 <div className="col-sm-3 col-md-3 pd device-info-col">
                     <PUE pueData={pueData} />
@@ -316,7 +317,8 @@ function StationPage() {
                     <StationInfo stationInfoData={stationInfoData} />
                 </div>
                 <div className="col-sm-5 col-md-5 pd time-step-col">
-                    <BottomMiddleDiagram diagramData={{title: "能耗变化情况", data: mockData.businessTypeAnalysis}} />
+                    <BottomMiddleDiagram station={station} diagramData={{title: "PUE日变化情况",
+                        pueSeries: mockData.pueSeries}} />
                 </div>
                 <div className="col-sm-4 col-md-4 pd business-type-time-col">
                     <BottomRightDiagram diagramData={{title: "空调运行同比分析", data: mockData.timeStepAnalysis}} />

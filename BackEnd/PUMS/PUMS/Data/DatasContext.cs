@@ -9,6 +9,8 @@ namespace PUMS.Data
             : base(options) { }
 
         public DbSet<EnergyData> EnergyDatas { get; set; }
+        public DbSet<CurrentData> CurrentDatas { get; set; }
+        public DbSet<SiteRoom> siteRooms { get; set; }
 
     }
 }
