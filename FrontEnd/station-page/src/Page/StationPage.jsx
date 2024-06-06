@@ -306,7 +306,8 @@ function StationPage() {
                     <Energy energyData={energyData}/>
                 </div>
                 <div className="col-sm-6 col-md-6 pd">
-                    <TopMiddleDiagram diagramData={{title: "PUE数据变化情况", data: mockData.channelHandleInfo}}/>
+                    <TopMiddleDiagram diagramData={{title: "日用电变化情况", data: mockData.channelHandleInfo,
+                        currentSeries: mockData.currentSeries}}/>
                 </div>
                 <div className="col-sm-3 col-md-3 pd device-info-col">
                     <PUE pueData={pueData} />

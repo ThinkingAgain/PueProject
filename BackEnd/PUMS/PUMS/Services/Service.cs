@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PUMS.Data;
 using PUMS.Models;
+using System.Globalization;
+using System.Linq;
 
 namespace PUMS.Services
 {
@@ -63,6 +66,58 @@ namespace PUMS.Services
 
             return rtd;
         }
+
+
+        public CurrentSeries getCurrentSeries(string siteId)
+        {
+            var cs = new CurrentSeries();
+
+            var siteRoom = _context.siteRooms.Where(s => s.SiteID == siteId).FirstOrDefault();
+            if (siteRoom != null)
+            {
+                var currentQuery = _context.CurrentDatas                    
+                    .Where(c => c.RoomID == siteRoom.RoomID && c.DType == "HOUR" && c.TimeStr.StartsWith("2024-05-23"))
+                    .OrderBy(c => c.TimeStr)
+                    .GroupBy(c => c.TimeStr, c => c);
+
+                var rand = new Random();
+                foreach (IGrouping<string, CurrentData> cg in currentQuery)
+                {
+                    var lease = Math.Round((rand.NextSingle() - 0.5) * 5, 1);
+                    var currentTagMap = cg.ToDictionary(c => c.Tag, c => Math.Round(c.Current, 1));
+
+                    cs.TimeSeries.Add(convertTimeStr(cg.Key));
+                    cs.Total.Add(currentTagMap.TryGetFloat(Constants.TOTAL));
+                    cs.Product.Add(currentTagMap.TryGetFloat(Constants.PRODUCT));
+                    cs.Device.Add(currentTagMap.TryGetFloat(Constants.DEVICE));
+                    cs.Office.Add(currentTagMap.TryGetFloat(Constants.OFFICE));
+                    cs.Business.Add(currentTagMap.TryGetFloat(Constants.BUSINESS));
+                    cs.Lease.Add((float)(currentTagMap.TryGetFloat(Constants.LEASE) + lease));
+                    
+                }
+
+            }
+            
+            return cs;
+
+        }
+
+
+        /// <summary>
+        /// 将"2024-05-22-09"字串转换为"5月22日9时"
+        /// </summary>
+        /// <param name="timeStr"></param>
+        /// <returns></returns>
+        private string convertTimeStr(string timeStr)
+        {
+            DateTime.TryParseExact(timeStr, "yyyy-MM-dd-HH", CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out DateTime ts);
+            return ts.ToString("M月d日H时");
+        }
+
+
+
+
 
     }
 }

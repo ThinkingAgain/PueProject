@@ -41,6 +41,15 @@ namespace PUMS.Controllers
             return await _service.getSiteRealTimeDataAsync(siteId);
         }
 
+        [HttpGet("collectdatas/currentseriesdata/{siteId}")]
+        public ActionResult<CurrentSeries> GetCurrentSeriesData(string siteId)
+        {
+            return  _service.getCurrentSeries(siteId);
+        }
+
+
+
+
         #region 测试
         [HttpGet("test")]
         public IActionResult Test() 
