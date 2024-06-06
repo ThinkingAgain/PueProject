@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,13 +61,16 @@ namespace PUMS.Services.Tests
         [TestMethod()]
         public void freedomTest()
         {
-            var s = "2024-05-22-09";
-            var a = s.Split('-');
-            var b = a[1..^0];
-            DateTime.TryParseExact(s, "yyyy-MM-dd-HH", CultureInfo.InvariantCulture, 
-                DateTimeStyles.None, out DateTime t);
-            var ts = t.ToString("M月d日H时");
-            Console.WriteLine(ts);
+
+            var a = new List<int>() { 1, 2, 3 };
+            var b = new List<int>() { 4, 5, 6 };
+            var t = a.Zip(b, (a, b) => a + b).ToList();
+            var rand = new Random();
+            var x = (rand.Next(-10, 10) / 100);
+
+
+            Console.WriteLine("hello");
+
             Assert.IsTrue("hello" is string);
         }
 

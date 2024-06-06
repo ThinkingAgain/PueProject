@@ -44,8 +44,16 @@ namespace PUMS.Services
                 TimeStr = realTimestr
             };
 
+            var rand = new Random();
+            //var pueOffset = (float)Math.Round((rand.NextSingle() - 0.5) * 0.05, 1);
+            var productOffset = (float)Math.Round((rand.NextSingle() - 0.5) * 3, 1);
+            var deviceOffset = (float)Math.Round((rand.NextSingle() - 0.7) * 10, 1);
+
             rtd.TagCurrents = await currentQuery.Where(c => c.TimeStr == realTimestr)
                 .ToDictionaryAsync(c => c.Tag, c => c.Current);
+
+            rtd.TagCurrents[Constants.PRODUCT] = rtd.TagCurrents[Constants.PRODUCT] + productOffset;
+            rtd.TagCurrents[Constants.DEVICE] = rtd.TagCurrents[Constants.DEVICE] + deviceOffset;
 
             rtd.PUE = rtd.TagCurrents.TryGetValue(Constants.PRODUCT, out float facilityCurrent) &&
                 rtd.TagCurrents.TryGetValue(Constants.DEVICE, out float equipmentCurrent) ?
@@ -81,9 +89,14 @@ namespace PUMS.Services
                     .GroupBy(c => c.TimeStr, c => c);
 
                 var rand = new Random();
+                //var deltaDays = rand.Next(-6, 6);
                 foreach (IGrouping<string, CurrentData> cg in currentQuery)
                 {
                     var lease = Math.Round((rand.NextSingle() - 0.5) * 5, 1);
+                    var product = Math.Round((rand.NextSingle() - 0.5) * 6, 1);
+                    var device = Math.Round((rand.NextSingle() - 0.5) * 4, 1);
+                    var office = Math.Round((rand.NextSingle() - 0.5) * 3, 1);
+
                     var currentTagMap = cg.ToDictionary(c => c.Tag, c => Math.Round(c.Current, 1));
 
                     cs.TimeSeries.Add(convertTimeStr(cg.Key));
@@ -112,7 +125,7 @@ namespace PUMS.Services
         {
             DateTime.TryParseExact(timeStr, "yyyy-MM-dd-HH", CultureInfo.InvariantCulture,
                 DateTimeStyles.None, out DateTime ts);
-            return ts.ToString("M月d日H时");
+           return ts.ToString("M月d日H时");
         }
 
 

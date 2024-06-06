@@ -1,24 +1,38 @@
 import {useEffect} from "react";
+import {fetchData} from "../../Service/getDatas.jsx";
 
 
-export default function BottomMiddleDiagram ({ diagramData } ) {
-    const { title, data } = diagramData
+export default function BottomMiddleDiagram ({ station, diagramData } ) {
+    const {siteID} = station;
+    const { title, data, pueSeries } = diagramData
     useEffect(() => {
         const option = {
             title : {text:'',subtext:'',top:'3',right:'0'},
+            legend: {
+                icon: 'rect',
+                itemWidth: 14,itemHeight: 5,itemGap:10,
+                data: ['PUE', '设备用电'],
+                right: '10px',top: '0px',
+                textStyle: {fontSize: 12,color: '#fff'}
+            },
             tooltip: {trigger: 'axis'},
             grid: {left: '8%',right: '8%',bottom: '10%'},
-            xAxis: {type: 'category',axisLine: {lineStyle: {color: '#57617B'}},axisLabel: {interval:0,textStyle: {color:'#fff',}},data: data.categoryArr},
+            xAxis: {
+                type: 'category',
+                axisLine: {lineStyle: {color: '#57617B'}},
+                axisLabel: {textStyle: {color:'#fff',}},
+                data: pueSeries.timeSeries//data.categoryArr
+            },
             yAxis:[
                 {
-                    type: 'value',name: '',
+                    type: 'value',name: '', //max:1.6,min: 0.6,
                     axisLine: {lineStyle: {color: '#57617B'}},
-                    axisLabel: {margin: 10,textStyle: {fontSize: 12, color:'#fff'},formatter:'{value}度'},
+                    axisLabel: {margin: 10,textStyle: {fontSize: 12, color:'#fff'},formatter:'{value}'},
                     splitLine: {show: false}
                 },
                 {
-                    type: 'value',name: '',max:9000,min: 3000,
-                    axisLabel: {margin: 10,textStyle: {fontSize: 12, color:'#fff'},formatter:'{value}元'},
+                    type: 'value',name: '',// max:200,min: 0,
+                    axisLabel: {margin: 10,textStyle: {fontSize: 12, color:'#fff'},formatter:'{value}A'},
                     splitLine: {
                         show: true,
                         lineStyle:{
@@ -30,7 +44,7 @@ export default function BottomMiddleDiagram ({ diagramData } ) {
             ],
             series: [
                 {
-                    name:'日均电量',
+                    name:'PUE',
                     type:'line',
                     yAxisIndex:0,
                     smooth: false,
@@ -50,10 +64,10 @@ export default function BottomMiddleDiagram ({ diagramData } ) {
                         }
                     },
                     itemStyle: {normal: { color: '#DA2F78'}},
-                    data:data.avgTime
+                    data: pueSeries.pue//data.avgTime
                 },
                 {
-                    name:'报账电费',
+                    name:'设备用电',
                     type:'bar',
                     barWidth:12,
                     yAxisIndex:1,
@@ -70,13 +84,31 @@ export default function BottomMiddleDiagram ({ diagramData } ) {
                             shadowColor: 'rgba(0, 0, 0, 0.1)',
                         }
                     },
-                    data:data.orderNum
+                    data: pueSeries.device//data.orderNum
                 }
             ]
         };
         const myChart = echarts.init(document.getElementById('time-step-detial'));
         myChart.clear();
         myChart.setOption(option);
+
+        /* 定时更新 */
+        const fetchDiagramData =  async () => {
+            const data = await fetchData(`/api/datas/collectdatas/pueseriesdata/${siteID}`);
+            //console.log(data)
+
+            //option.xAxis[0].data = data.timeSeries;
+            option.series[0].data = data.pue;
+            option.series[1].data = data.device;
+            //console.log(option)
+            //myChart.clear()
+            myChart.setOption(option)
+        }
+        const diagramIntervalId = setInterval(fetchDiagramData, 11000);
+
+        return () => clearInterval(diagramIntervalId);
+
+
 
     }, [title])
     return (

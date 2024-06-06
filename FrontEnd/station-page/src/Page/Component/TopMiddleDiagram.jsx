@@ -1,8 +1,9 @@
 import {useEffect} from "react";
-import {getRealTimedatasById} from "../../Service/getDatas";
+import {fetchData, getRealTimedatasById} from "../../Service/getDatas";
 
 
-export default function TopMiddleDiagram ({ diagramData } ) {
+export default function TopMiddleDiagram ({ station, diagramData } ) {
+    const {siteID} = station;
     const { title, data, currentSeries } = diagramData
     useEffect(() => {
         const option = {
@@ -118,16 +119,20 @@ export default function TopMiddleDiagram ({ diagramData } ) {
 
         //const randomx = () => Math.floor(Math.random() * 7);
         //const iconx = ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow']
-        const fetchDiagramData =  () => {
-            //const data = await getRealTimedatasById(siteID);
+        const fetchDiagramData =  async () => {
+            const data = await fetchData(`/api/datas/collectdatas/currentseriesdata/${siteID}`);
+            //console.log(data)
 
-            //const x = randomx();
-            //option.legend.icon = iconx[x]
-            console.log(option)
+            //option.xAxis[0].data = data.timeSeries;
+            option.series[0].data = data.product;
+            option.series[1].data = data.device;
+            option.series[2].data = data.office;
+            option.series[3].data = data.lease;
+            //console.log(option)
             //myChart.clear()
             myChart.setOption(option)
         }
-        const diagramIntervalId = setInterval(fetchDiagramData, 10000);
+        const diagramIntervalId = setInterval(fetchDiagramData, 7000);
 
         return () => clearInterval(diagramIntervalId);
 

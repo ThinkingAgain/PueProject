@@ -47,6 +47,20 @@ namespace PUMS.Controllers
             return  _service.getCurrentSeries(siteId);
         }
 
+        [HttpGet("collectdatas/pueseriesdata/{siteId}")]
+        public ActionResult GetPueSeriesData(string siteId)
+        {
+            var currentSeries = _service.getCurrentSeries(siteId);
+            
+            return Ok(new { 
+                timeSeries = currentSeries.TimeSeries,
+                product = currentSeries.Product,
+                device = currentSeries.Device,
+                pue = currentSeries.Product.Zip(currentSeries.Device, 
+                    (p, d) => Math.Round(p / d , 1)).ToList()
+            });
+        }
+
 
 
 

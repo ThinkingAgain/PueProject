@@ -62,7 +62,7 @@ export default function PUE({ pueData }) {
                                                     <div className="progress"
                                                          style={{float:'left', height:'8px', width:'180px', backgroundColor:'#383E60'}}>
                                                         <div className="progress-bar progress-bar-striped"
-                                                             style={{minWidth:0, width:'66.1562%'}}></div>
+                                                             style={{minWidth:0, width:`${realTimeData.tagCurrents.DEVICE * 100 / realTimeData.tagCurrents.PRODUCT}%`}}></div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -80,7 +80,7 @@ export default function PUE({ pueData }) {
                                         <tr className="device-use">
                                             <td></td>
                                             <td>
-                                                <div className="nei-cun-size"><span>{`${realTimeData.proportions.PRODUCT.toFixed(3) * 100}%` || 0}</span></div>
+                                                <div className="nei-cun-size"><span>{`${(realTimeData.proportions.PRODUCT * 100).toFixed(1) }%` || 0}</span></div>
                                             </td>
                                             <td>
                                                 <div className="cpu-use"><span>{`${realTimeData.proportions.OFFICE.toFixed(3) * 100}%` || 0}</span></div>
@@ -107,10 +107,10 @@ export default function PUE({ pueData }) {
                                         <tr className="device-use">
                                             <td></td>
                                             <td>
-                                                <div className="nei-cun-size"><span>{`${realTimeData.proportions.LEASE.toFixed(3) * 100}%` || 0}</span></div>
+                                                <div className="nei-cun-size"><span>{item.temperature || 0}</span></div>
                                             </td>
                                             <td>
-                                                <div className="cpu-use"><span>{item.temperature || 0}</span></div>
+                                                <div className="cpu-use"><span>{item.humidity || 0}</span></div>
                                             </td>
                                             <td>
                                                 <div className="nei-cun-use">
@@ -120,10 +120,10 @@ export default function PUE({ pueData }) {
                                         <tr>
                                             <td></td>
                                             <td>
-                                                <div className="labe-value">&nbsp;&nbsp;外 租 耗 能</div>
+                                                <div className="labe-value">&nbsp;&nbsp;机 房 温 度</div>
                                             </td>
                                             <td>
-                                                <div className="labe-value">&nbsp;&nbsp;机 房 温 度</div>
+                                                <div className="labe-value">&nbsp;&nbsp;机 房 湿 度</div>
                                             </td>
                                             <td>
                                                 <div className="labe-value">&nbsp;&nbsp;空 调 状 态</div>
