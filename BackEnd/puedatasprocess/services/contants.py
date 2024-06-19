@@ -3,7 +3,7 @@ HOUR = "HOUR"
 DAY = "DAY"
 MONTH = "MONTH"
 
-# status constans
+# status constants
 COMPLETED = "COMPLETED"
 UNCOMPLETED = "UNCOMPLETED"
 NODATA = "NODATA"

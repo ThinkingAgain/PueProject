@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-from services.models import Todo
+from typing import List
+from services.models import Todo, SiteRoom
 from services.contants import *
 from sqlalchemy import create_engine, select, ScalarResult
 from sqlalchemy.orm import Session
@@ -8,6 +9,12 @@ from sqlalchemy.orm import Session
 class MysqlService:
     def __init__(self, host: str, user: str, pwd: str, db: str):
         self.engine = create_engine(f'mysql+pymysql://{user}:{pwd}@{host}/{db}?charset=utf8')#, echo=True)
+
+    def get_rooms(self) -> List[str]:
+        """从表site_rooms中获取在用的roomid列表"""
+        with Session(self.engine) as session:
+            query = select(SiteRoom)
+            return [sr.roomid for sr in session.scalars(query)]
 
     def get_todos(self, dt: datetime) -> list[Todo]:
         """输入datetime参数, 判断前一时/前一日/前一月是否存在于表中, 如不存在则插入, 最后获取所有UNCOMPLETED状态的Todo列表
@@ -70,12 +77,14 @@ if __name__ == "__main__":
     # pwd = 'asdfwj'
     # db = 'pue'
     # mss = MysqlService(host, user, pwd, db)
-    timestr = "2024-05-20-13"
-    # mss.get_todos(timestr)
-    ts = timestr.split('-')
-
-    xx = ('-'.join(ts[:x]) for x in range(2, len(ts) + 1))
-    yy = (MONTH, DAY, HOUR)
-    for v, z in zip(xx, yy):
-        print(v, z)
-
+    # timestr = "2024-05-20-13"
+    # # mss.get_todos(timestr)
+    # ts = timestr.split('-')
+    #
+    # xx = ('-'.join(ts[:x]) for x in range(2, len(ts) + 1))
+    # yy = (MONTH, DAY, HOUR)
+    # for v, z in zip(xx, yy):
+    #     print(v, z)
+    a = 'aaa''bbb'
+    print(a)
+    print(type(a))
