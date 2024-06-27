@@ -1,14 +1,63 @@
-from typing import Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable, Dict
+from datetime import date, timedelta
 
 from services.factory import ServicesFactory
 from services.models import Todo, CurrentData, CollectData
 from services.constants import *
 
 
+def get_month_se_timestr(month_timestr: str) -> tuple[str, str]:
+    """
+    由月份字串返回当月的起止日期字串, 形如YYYY-MM-DD
+    :param year_dash_month_str: YYYY-MM
+    :return: (YYYY-MM-01, YYYY-MM-30?当月最后一天)
+    """
+    dt = date.fromisoformat(f'{month_timestr}-01')
+    stimestr = dt.strftime("%Y-%m-%d")
+    dt = dt.replace(month=dt.month + 1) - timedelta(days=1)
+    etimestr = dt.strftime("%Y-%m-%d")
+    return stimestr, etimestr
+
+
+def calculate_vector_from_point_currents_dict(roomid: str, point_dic: Dict[str, list[float]]) -> [tuple[str, float]]:
+    """
+    由给出的{point:[current]}数据,使用vector_formula求出vector值, 并生成相应的[(vector, value)]元组列表, 并返回
+    :param roomid:
+    :param point_dic: 所有point及对应的current值
+    :return:计算出的[(vector, value)]元组列表
+    """
+    vectors = []
+    # 计算均值, 生成{point: 均值}字典
+    point_mean_dic = {point: sum(crt_list) / len(crt_list) for point, crt_list in point_dic.items() if crt_list}
+
+    # 使用vector_formula公式计算vector值
+    for vf in ServicesFactory().get_mysqlService().get_vector_formula(roomid):
+        try:
+            vector_value = eval(vf.formula.format(**point_mean_dic))
+        except:
+            vector_value = -1
+        vectors.append((vf.vector, vector_value))
+
+    #返回vectors
+    return vectors
+
+
 @runtime_checkable
 class IProcess(Protocol):
     def process(self, todo: Todo) -> str:
         return ""
+
+
+class Process(IProcess):
+    def process(self, todo: Todo) -> str:
+        """根据todo类型执行相应的Process"""
+        if todo.dtype == HOUR:
+            return HourlyProcess().process(todo)
+        if todo.dtype == DAY:
+            return DailyProcess().process(todo)
+        if todo.dtype == MONTH:
+            return MonthlyProcess().process(todo)
+        return UNCOMPLETED
 
 
 class HourlyProcess(IProcess):
@@ -94,19 +143,82 @@ class HourlyProcess(IProcess):
 
 class DailyProcess(IProcess):
     def process(self, todo: Todo) -> str:
-        # todo 获取todo.timestr指定的日POINT值, 分类存储到字典{roomid: {point: 均值}}
-        datas = ServicesFactory().get_mysqlService().get_current_datas(HOUR, POINT,
-                                                                       f'{todo.timestr}-00', f'{todo.timestr}-23')
+        # 获取todo.timestr指定的日POINT值, 分类存储到字典{roomid: {point: [current]}}
+        room_point_dic = {}
+        for crd in ServicesFactory().get_mysqlService().get_current_datas(HOUR, POINT,
+                                                                          f'{todo.timestr}-00', f'{todo.timestr}-23'):
+            if crd.roomid not in room_point_dic:
+                room_point_dic[crd.roomid] = {}
+            if crd.tag not in room_point_dic[crd.roomid]:
+                room_point_dic[crd.roomid][crd.tag] = []
+            room_point_dic[crd.roomid][crd.tag].append(crd.current)
 
-        # todo 迭代字典, 调用方法生成要写入库的currentDatas  使用vector_formula公式计算vector值
+        # 迭代字典, 调用方法生成要写入库的vector-currentDatas  使用vector_formula公式计算vector值
+        currentDatas = []
+        for roomid, point_dic in room_point_dic.items():
+            vectors = calculate_vector_from_point_currents_dict(roomid, point_dic)
+            currentDatas.extend([CurrentData(roomid=roomid, timestr=todo.timestr, dtype=todo.dtype,
+                                             category=VECTOR, tag=vector, current=value) for vector, value in vectors])
 
-        # todo 存储到 localstore, 并返回状态
+        if not currentDatas:
+            return NODATA
+
+        # 存储到 localstore, 并返回状态
+        ServicesFactory().get_mysqlService().set_current_datas(currentDatas)
         return COMPLETED
 
-    def _gen_currentDatas(self):
-        # todo 计算均值
+    # todo 重构后可删除此方法
+    # def _gen_currentDatas(self, roomid: str, todo: Todo, point_dic: Dict[str, list[float]]) -> [CurrentData]:
+    #     """
+    #     由给出的某room的{point:[current]}数据,使用vector_formula求出vector值, 并生成相应的currentData,并返回
+    #     :param roomid:
+    #     :param todo:
+    #     :param point_dic: 所有point及对应的current值
+    #     :return:计算出的vector-CurrentData列表
+    #     """
+    #     currents = []
+    #     # 计算均值, 生成{point: 均值}字典
+    #     point_mean_dic = {point: sum(crt_list) / len(crt_list) for point, crt_list in point_dic.items() if crt_list}
+    #
+    #     # todo 使用vector_formula公式计算vector值
+    #     for vf in ServicesFactory().get_mysqlService().get_vector_formula(roomid):
+    #         try:
+    #             vector_value = eval(vf.formula.format(**point_mean_dic))
+    #         except:
+    #             vector_value = -1
+    #         vector = CurrentData(roomid=roomid, timestr=todo.timestr, dtype=todo.dtype,
+    #                              category=VECTOR, tag=vf.vector, current=vector_value)
+    #         currents.append(vector)
+    #
+    #     # 返回currents
+    #     return currents
 
-        # todo 使用vector_formula公式计算vector值
 
-        # todo 返回currents
-        pass
+class MonthlyProcess(IProcess):
+    def process(self, todo: Todo) -> str:
+        # 获取todo.timestr指定月的POINT值, 分类存储到字典{roomid: {point: [current]}}
+        room_point_dic = {}
+        # 获取一月的数据, 时间字串是 从1日0时-> 28/29/30/31?日23时
+        sdate_timestr, edate_timestr = get_month_se_timestr(todo.timestr)
+        for crd in ServicesFactory().get_mysqlService().get_current_datas(HOUR, POINT,
+                                                                          f'{sdate_timestr}-00', f'{edate_timestr}-23'):
+            if crd.roomid not in room_point_dic:
+                room_point_dic[crd.roomid] = {}
+            if crd.tag not in room_point_dic[crd.roomid]:
+                room_point_dic[crd.roomid][crd.tag] = []
+            room_point_dic[crd.roomid][crd.tag].append(crd.current)
+
+        # 迭代字典, 调用方法生成要写入库的vector-currentDatas  使用vector_formula公式计算vector值
+        # todo 使用类之外的函数来完成以下功能
+        currentDatas = []
+        for roomid, point_dic in room_point_dic.items():
+            vectors = calculate_vector_from_point_currents_dict(roomid, point_dic)
+            currentDatas.extend([CurrentData(roomid=roomid, timestr=todo.timestr, dtype=todo.dtype,
+                                             category=VECTOR, tag=vector, current=value) for vector, value in vectors])
+
+        if not currentDatas:
+            return NODATA
+
+        # 存储到 localstore, 并返回状态
+        ServicesFactory().get_mysqlService().set_current_datas(currentDatas)
+        return COMPLETED

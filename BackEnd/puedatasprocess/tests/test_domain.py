@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from domain.process import HourlyProcess, DailyProcess
+from domain.process import HourlyProcess, DailyProcess, MonthlyProcess
 from services.models import Todo
 from services.constants import *
 from datetime import datetime, timedelta
@@ -22,16 +22,26 @@ class TestDomain(TestCase):
         todo = Todo(timestr="2024-01-01-12", dtype=HOUR, status=UNCOMPLETED)
         self.assertEqual(hp.process(todo), NODATA)
 
-    def test_gen_current_datas(self):
+    def test_gen_hour_current_datas(self):
+        """生成小时数据"""
         hp = HourlyProcess()
-        dt = datetime(2024, 6, 25, 0)
+        dt = datetime(2024, 6, 26, 0)
         for i in range(24):
             timestr = (dt + timedelta(hours=i)).strftime("%Y-%m-%d-%H")
             todo = Todo(timestr=timestr, dtype=HOUR, status=UNCOMPLETED)
             hp.process(todo)
 
-    def test_process(self):
+    def test_dailyProcess(self):
+        """生成日数据"""
         dp = DailyProcess()
-        todo = Todo(timestr="2024-06-25", dtype=DAY, status=UNCOMPLETED)
-        dp.process(todo)
-        self.fail()
+        for timestr in ['2024-06-24', '2024-06-25', '2024-06-26']:
+            todo = Todo(timestr=timestr, dtype=DAY, status=UNCOMPLETED)
+            self.assertEqual(dp.process(todo), COMPLETED)
+
+    def test_monthlyProcess(self):
+        """生成月数据"""
+        mp = MonthlyProcess()
+        for timestr in ['2024-06']:
+            todo = Todo(timestr=timestr, dtype=MONTH, status=UNCOMPLETED)
+            self.assertEqual(mp.process(todo), COMPLETED)
+
