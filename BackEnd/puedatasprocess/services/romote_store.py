@@ -2,7 +2,8 @@ import influxdb_client
 from datetime import datetime, timedelta
 from typing import List, Dict
 import pytz
-from services.models import CollectData
+from services.models import CollectData, Todo
+from services.constants import *
 
 
 def convert_hourstr(timestr: str) -> tuple:
@@ -64,7 +65,15 @@ class InfluxService:
 
 
 if __name__ == "__main__":
-    influx = InfluxService()
-    timestr = "2024-05-22-12"
-    roomid = "聊白洼机房"
-    influx.query_onehour_currentdatas_of_someroom(roomid, timestr)
+    # influx = InfluxService()
+    # timestr = "2024-05-22-12"
+    # roomid = "聊白洼机房"
+    # influx.query_onehour_currentdatas_of_someroom(roomid, timestr)
+    todos = [
+        Todo(timestr="2024-02", dtype=MONTH, status=NODATA),  # insert
+        Todo(timestr="2024-05-20", dtype=DAY, status=UNCOMPLETED),  # noChange
+        Todo(timestr="2024-05-20-13", dtype=HOUR, status=NODATA),  # update
+    ]
+    print(todos)
+    print(todos[0].dtype)
+    print(todos[1].dtype)

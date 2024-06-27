@@ -54,10 +54,36 @@ class CurrentData(Base):
     roomid: Mapped[str] = mapped_column(String(60), primary_key=True)
     timestr: Mapped[str] = mapped_column(String(30), primary_key=True)
     dtype: Mapped[str] = mapped_column(String(30), primary_key=True)
+    category: Mapped[str] = mapped_column(String(30), primary_key=True)
     tag: Mapped[str] = mapped_column(String(200), primary_key=True)
     current: Mapped[float] = mapped_column(Float)
 
     def __repr__(self):
         return (f"CurrentData(roomid={self.roomid}, timestr={self.timestr}, "
-                f"dtype={self.dtype}), tag={self.tag}, current={self.current}")
+                f"dtype={self.dtype}, category={self.category}, tag={self.tag}, "
+                f"current={self.current})")
 
+
+class Collector(Base):
+    __tablename__ = "collector"
+
+    roomid: Mapped[str] = mapped_column(String(60), primary_key=True)
+    groupid: Mapped[str] = mapped_column(String(200), primary_key=True)
+    tag: Mapped[str] = mapped_column(String(200), primary_key=True)
+    collectpoint: Mapped[str] = mapped_column(String(60))
+
+    def __repr__(self):
+        return (f"Collector(roomid={self.roomid}, groupid={self.groupid}, "
+                f"tag={self.tag}, collectpoint={self.collectpoint}")
+
+
+class VectorFormula(Base):
+    __tablename__ = "vector_formula"
+
+    roomid: Mapped[str] = mapped_column(String(60), primary_key=True)
+    vector: Mapped[str] = mapped_column(String(60), primary_key=True)
+    formula: Mapped[str] = mapped_column(String(300))
+
+    def __repr__(self):
+        return f"VectorFormula(roomid={self.roomid}, vector={self.vector}, formula={self.formula})"
+    
