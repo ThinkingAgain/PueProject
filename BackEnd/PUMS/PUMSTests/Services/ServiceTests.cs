@@ -53,8 +53,8 @@ namespace PUMS.Services.Tests
         {
             var service = new Service(_context);
             var siteId = "146503";  // 白洼驻地
-            var data = service.getCurrentSeries(siteId);
-            Assert.IsTrue(data is CurrentSeries);
+            var data = service.getCurrentSeriesOfOneDay(siteId, "2024-06-28");
+            Assert.IsTrue(data is VectorSeries);
         }
 
 
@@ -62,11 +62,13 @@ namespace PUMS.Services.Tests
         public void freedomTest()
         {
 
-            var a = new List<int>() { 1, 2, 3 };
+            /*var a = new List<int>() { 1, 2, 3 };
             var b = new List<int>() { 4, 5, 6 };
             var t = a.Zip(b, (a, b) => a + b).ToList();
             var rand = new Random();
-            var x = (rand.Next(-10, 10) / 100);
+            var x = (rand.Next(-10, 10) / 100);*/
+
+            var timestr = DateTime.Today.ToString("yyyy-MM-dd");
 
 
             Console.WriteLine("hello");
