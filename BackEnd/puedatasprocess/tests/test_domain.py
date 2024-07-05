@@ -25,16 +25,22 @@ class TestDomain(TestCase):
     def test_gen_hour_current_datas(self):
         """生成小时数据"""
         hp = HourlyProcess()
-        dt = datetime(2024, 6, 28, 0)
-        for i in range(24):
-            timestr = (dt + timedelta(hours=i)).strftime("%Y-%m-%d-%H")
-            todo = Todo(timestr=timestr, dtype=HOUR, status=UNCOMPLETED)
-            hp.process(todo)
+        for d in [4, 5]:
+            dt = datetime(2024, 7, d, 0)
+            for i in range(24):
+                timestr = (dt + timedelta(hours=i)).strftime("%Y-%m-%d-%H")
+                todo = Todo(timestr=timestr, dtype=HOUR, status=UNCOMPLETED)
+                hp.process(todo)
+        # dt = datetime(2024, 7, 1, 0)
+        # for i in range(24):
+        #     timestr = (dt + timedelta(hours=i)).strftime("%Y-%m-%d-%H")
+        #     todo = Todo(timestr=timestr, dtype=HOUR, status=UNCOMPLETED)
+        #     hp.process(todo)
 
     def test_dailyProcess(self):
         """生成日数据"""
         dp = DailyProcess()
-        for timestr in ['2024-06-27']:
+        for timestr in ['2024-07-04']:
             todo = Todo(timestr=timestr, dtype=DAY, status=UNCOMPLETED)
             self.assertEqual(dp.process(todo), COMPLETED)
 

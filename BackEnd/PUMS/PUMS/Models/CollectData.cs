@@ -1,6 +1,6 @@
 ﻿namespace PUMS.Models
 {
-    public class RealTimeData
+    public class CollectData
     {
         public string SiteID { get; set; }
         public string RoomID { get; set; }

@@ -15,24 +15,33 @@
 2. 指定站点的实时数据
    
    ```csharp
-   /*指定站点的最晚时刻的RealTimeData数据*/
+   /*指定站点的最晚时刻的CollectData数据*/
    /api/datas/collectdatas/realtimedata/{siteId}
    ```
 
-3. 指定站点某日的电流序列数据
+3. 指定站点和时间类型的采集数据
    
    ```csharp
-   /*指定站点某日的电流序列数据*/
-   /api/datas/collectdatas/currentseriesdata/{siteId}
-   /*指定站点当日电流序列数据*/
-   /api/datas/collectdatas/currentseriesdata/{siteId}/{dayTimeStr}
+   /*指定站点前一日的日统计CollectData采集数据*/
+   /api/datas/collectdatas/sometime/{siteId}
+   /*指定站点和时间类型及时刻的CollectData采集数据*/
+   /api/datas/collectdatas/sometime/{siteId}/{dtype}/{timestr}
    ```
 
-4. 指定站点某日的Pue序列数据
+4. 指定站点某时间类型和时间点的电流序列数据
    
    ```csharp
-   /*指定站点某日的Pue序列数据*/
+   /*指定站点当日的电流序列数据*/
+   /api/datas/collectdatas/currentseriesdata/{siteId}
+   /*指定站点某时间类型和时间点的电流序列数据*/
+   /api/datas/collectdatas/currentseriesdata/{siteId}/{timeType}/{timeStr}
+   ```
+
+5. 指定站点某日的Pue序列数据
+   
+   ```csharp
+   /*指定站点当日的Pue序列数据*/
    /api/datas/collectdatas/pueseriesdata/{siteId}
-   /*指定站点当日Pue序列数据*/
+   /*指定站点某日Pue序列数据*/
    /api/datas/collectdatas/pueseriesdata/{siteId}/{dayTimeStr}
    ```

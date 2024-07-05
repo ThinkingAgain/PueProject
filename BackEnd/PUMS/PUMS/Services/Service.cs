@@ -10,6 +10,20 @@ namespace PUMS.Services
     public class Service
     {
         private readonly DatasContext _context;
+        // 用于timestr格式的时间字串转为x年x月x日x时的格式转换
+        private readonly Dictionary<string, (string inputFormat, string outputFormat)> _timeStrFormat = new ()
+            {
+                {Constants.HOUR, ("yyyy-MM-dd-HH", "M月d日H时") },
+                {Constants.DAY, ("yyyy-MM-dd", "M月d日") },
+                {Constants.MONTH, ("yyyy-MM", "M月") }
+            };
+        // 用于： 请求类型为日实际是请求时序列， 请求类型为月实际是请求日序列， 此字典用于快速转换为实际请求类型
+        private readonly Dictionary<string, string> _dtypeMap = new()
+            {
+                {Constants.DAY, Constants.HOUR },
+                {Constants.MONTH, Constants.DAY },
+                {Constants.YEAR, Constants.MONTH }
+            };
 
         public Service(DatasContext context)
         {
@@ -21,22 +35,22 @@ namespace PUMS.Services
         /// </summary>
         /// <param name="siteId">能源系统站点ID</param>
         /// <returns></returns>
-        public async Task<RealTimeData> getSiteRealTimeDataAsync(string siteId)
+        public async Task<CollectData> getRealTimeDataBySiteIdAsync(string siteId)
         {
             var siteRoom = _context.siteRooms.Where(s => s.SiteID == siteId).FirstOrDefault();            
-            if (siteRoom == null ) return new RealTimeData();
+            if (siteRoom == null ) return new CollectData();
 
             var currentQuery = _context.CurrentDatas.Where(c => c.RoomID == siteRoom.RoomID && c.DType == "HOUR");
             
             var realTimestr = currentQuery.OrderByDescending(c => c.TimeStr).FirstOrDefault()?.TimeStr;
-            if (realTimestr == null) return new RealTimeData();
+            if (realTimestr == null) return new CollectData();
 
             /// 生成RealTimeData的步骤:
             /// 1. 直接可得: siteId, roomid, site, timestr
             /// 2. LINQ生成tagCurrents
             /// 3. 由tagCurrents计算得来: pue, proportions
 
-            var rtd = new RealTimeData
+            var rtd = new CollectData
             {
                 SiteID = siteId,
                 RoomID = siteRoom?.RoomID ?? "",
@@ -79,6 +93,37 @@ namespace PUMS.Services
         }
 
         /// <summary>
+        /// 获取指定站点, 指定时间类型, 指定时间点的CollectData数据
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="dType"></param>
+        /// <param name="timeStr"></param>
+        /// <returns></returns>
+        public async Task<CollectData> getCollectDataAsync(string siteId, string dType, string timeStr)
+        {
+            var siteRoom = _context.siteRooms.Where(s => s.SiteID == siteId).FirstOrDefault();
+            if (siteRoom == null) return new CollectData();
+
+            var vectorCurrents = await _context.CurrentDatas
+                .Where(c => c.RoomID == siteRoom.RoomID && c.DType == dType 
+                            && c.TimeStr == timeStr && c.Category == Constants.VECTOR)
+                .ToDictionaryAsync(c => c.Tag, c => c.Current);
+            var proportions = calculateVectorDicToProportions(vectorCurrents); 
+
+            return new CollectData
+            {
+                SiteID = siteId,
+                RoomID = siteRoom?.RoomID ?? "",
+                Site = siteRoom?.Site ?? "",
+                TimeStr = timeStr,
+                TagCurrents = vectorCurrents,
+                Proportions = proportions
+            };
+
+        }
+
+
+        /// <summary>
         /// 获取某站点某天的VectorSeries数据
         /// </summary>
         /// <param name="siteId"></param>
@@ -108,7 +153,7 @@ namespace PUMS.Services
 
                     var currentTagMap = cg.ToDictionary(c => c.Tag, c => Math.Round(c.Current, 2));
 
-                    vs.TimeSeries.Add(convertTimeStr(cg.Key));
+                    vs.TimeSeries.Add(convertTimeStr(cg.Key, Constants.HOUR));
                     vs.Total.Add(currentTagMap.TryGetFloat(Constants.TOTAL));
                     vs.Product.Add(currentTagMap.TryGetFloat(Constants.PRODUCT));
                     vs.Device.Add(currentTagMap.TryGetFloat(Constants.DEVICE));
@@ -125,19 +170,87 @@ namespace PUMS.Services
 
         }
 
+        /// <summary>
+        /// 获取某站点指定时间类型和时间点的VectorSeries数据
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="dayTimeStr"></param>
+        /// <returns></returns>
+        public VectorSeries getVectorSeries(string siteId, string timeType, string timeStr)
+        {
+            var vs = new VectorSeries();
+
+            /*var dtypeMap = new Dictionary<string, string>()
+            {
+                {Constants.DAY, Constants.HOUR },
+                {Constants.MONTH, Constants.DAY },
+                {Constants.YEAR, Constants.MONTH }
+            };*/
+            var siteRoom = _context.siteRooms.Where(s => s.SiteID == siteId).FirstOrDefault();
+            if (siteRoom != null && _dtypeMap.ContainsKey(timeType))
+            {
+                var currentQuery = _context.CurrentDatas
+                    .Where(c => c.RoomID == siteRoom.RoomID && c.DType == _dtypeMap[timeType]
+                    && c.Category == Constants.VECTOR && c.TimeStr.StartsWith(timeStr))
+                    .OrderBy(c => c.TimeStr)
+                    .GroupBy(c => c.TimeStr, c => c);
+
+                foreach (IGrouping<string, CurrentData> cg in currentQuery)
+                {
+                    var currentTagMap = cg.ToDictionary(c => c.Tag, c => Math.Round(c.Current, 2));
+
+                    vs.TimeSeries.Add(convertTimeStr(cg.Key, _dtypeMap[timeType]));
+                    vs.Total.Add(currentTagMap.TryGetFloat(Constants.TOTAL));
+                    vs.Product.Add(currentTagMap.TryGetFloat(Constants.PRODUCT));
+                    vs.Device.Add(currentTagMap.TryGetFloat(Constants.DEVICE));
+                    vs.Office.Add(currentTagMap.TryGetFloat(Constants.OFFICE));
+                    vs.Business.Add(currentTagMap.TryGetFloat(Constants.BUSINESS));
+                    vs.Lease.Add(currentTagMap.TryGetFloat(Constants.LEASE));
+                    vs.Pue.Add(currentTagMap.TryGetFloat(Constants.PUE));
+                }
+
+            }
+
+            return vs;
+        }
+
 
         /// <summary>
         /// 将"2024-05-22-09"字串转换为"5月22日9时"
         /// </summary>
         /// <param name="timeStr"></param>
+        /// <param name="dType">HOUR/DAY/MONTH</param>
         /// <returns></returns>
-        private string convertTimeStr(string timeStr)
+        private string convertTimeStr(string timeStr, string dType)
         {
-            DateTime.TryParseExact(timeStr, "yyyy-MM-dd-HH", CultureInfo.InvariantCulture,
+            DateTime.TryParseExact(timeStr, _timeStrFormat[dType].inputFormat, CultureInfo.InvariantCulture,
                 DateTimeStyles.None, out DateTime ts);
-           return ts.ToString("M月d日H时");
+           return ts.ToString(_timeStrFormat[dType].outputFormat);
         }
 
+
+        /// <summary>
+        /// 由Vector->电流字典计算出各vector占比字典
+        /// </summary>
+        /// <param name="vectors"></param>
+        /// <returns></returns>
+        private Dictionary<string, float> calculateVectorDicToProportions(Dictionary<string, float> vectors)
+        {
+            var proportions = new Dictionary<string, float>();
+
+            vectors.TryGetValue(Constants.TOTAL, out float total);
+            vectors.TryGetValue(Constants.PRODUCT, out float product);
+            vectors.TryGetValue(Constants.OFFICE, out float office);
+            vectors.TryGetValue(Constants.BUSINESS, out float business);
+            vectors.TryGetValue(Constants.LEASE, out float lease);
+
+            proportions[Constants.PRODUCT] = product / total;
+            proportions[Constants.OFFICE] = office / total;
+            proportions[Constants.BUSINESS] = business / total;
+            proportions[Constants.LEASE] = lease / total;
+
+            return proportions;
+        }
 
 
 

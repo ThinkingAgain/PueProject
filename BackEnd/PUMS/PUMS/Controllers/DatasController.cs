@@ -48,23 +48,45 @@ namespace PUMS.Controllers
         /// <param name="siteId"></param>
         /// <returns>RealTimeData</returns>
         [HttpGet("collectdatas/realtimedata/{siteId}")]
-        public async Task<ActionResult<RealTimeData>> GetRealTimeDataAsync(string siteId)
+        public async Task<ActionResult<CollectData>> GetRealTimeDataAsync(string siteId)
         {
-            return await _service.getSiteRealTimeDataAsync(siteId);
+            return await _service.getRealTimeDataBySiteIdAsync(siteId);
         }
 
         /// <summary>
-        /// 指定站点某日的Vector序列数据, 默认为当日
+        /// 指定站点 指定时间类型和指定时间点的CollectData
+        /// 缺省为前一日的dtype=DAY类型的CollectData
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="dType"></param>
+        /// <param name="timeStr"></param>
+        /// <returns></returns>
+        [HttpGet("collectdatas/sometime/{siteId}")]
+        [HttpGet("collectdatas/sometime/{siteId}/{dType}/{timeStr}")]
+        public async Task<ActionResult<CollectData>> GetCollectData(string siteId, 
+            string? dType, string? timeStr)
+        {
+            return await _service.getCollectDataAsync(siteId, 
+                dType ?? Constants.DAY, 
+                timeStr ?? DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd"));
+        }
+
+        /// <summary>
+        /// 指定站点某日的电流序列数据, 默认为当日
         /// </summary>
         /// <param name="siteId"></param>
         /// <returns></returns>
         [HttpGet("collectdatas/currentseriesdata/{siteId}")]
-        [HttpGet("collectdatas/currentseriesdata/{siteId}/{dayTimeStr}")]
-        public ActionResult<VectorSeries> GetCurrentSeriesData(string siteId, 
-            string? dayTimeStr)
+        [HttpGet("collectdatas/currentseriesdata/{siteId}/{timeType}/{timeStr}")]
+        public ActionResult<VectorSeries> GetCurrentSeriesData(string siteId, string? timeType,
+            string? timeStr)
         {
-            return  _service.getVectorSeriesOfOneDay(siteId, 
-                dayTimeStr?? DateTime.Today.ToString("yyyy-MM-dd"));
+            if (String.IsNullOrEmpty(timeType) || String.IsNullOrEmpty(timeStr))
+            {
+                return _service.getVectorSeriesOfOneDay(siteId, 
+                    DateTime.Today.ToString("yyyy-MM-dd"));
+            }
+            return  _service.getVectorSeries(siteId, timeType.ToUpper(), timeStr);
         }
 
         /// <summary>

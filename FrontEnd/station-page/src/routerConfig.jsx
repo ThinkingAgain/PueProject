@@ -1,5 +1,6 @@
 import MainPage from "./Page/MainPage";
-import StationPage, {stationLoader} from "./Page/StationPage";
+import StationMonitor, {stationMonitorLoader} from "./Page/StationMonitor.jsx";
+import HistoryAnalysis, {historyAnalysisLoader} from "./Page/HistoryAnalysis.jsx";
 
 const routerConfig = [
     {
@@ -8,9 +9,14 @@ const routerConfig = [
         errorElement: <div>错误!</div>,
     },
     {
-        path: "station/:siteId/:meterId",
-        element: <StationPage />,
-        loader: stationLoader,
+        path: "station/:siteID/:meterID",
+        element: <StationMonitor />,
+        loader: stationMonitorLoader,
+    },
+    {
+        path: "history/station/:siteID/:meterID",
+        element: <HistoryAnalysis />,
+        loader: historyAnalysisLoader,
     }
 
 ]

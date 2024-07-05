@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import { useLoaderData } from "react-router-dom"
+import {useLoaderData, useNavigate} from "react-router-dom"
 import Energy from "./Component/Energy";
 import TopMiddleDiagram from './Component/TopMiddleDiagram'
 import PUE from "./Component/PUE";
@@ -7,23 +7,30 @@ import StationInfo from "./Component/StationInfo";
 import { data as mockData } from '../mock/mockData'
 import BottomMiddleDiagram from "./Component/BottomMiddleDiagram";
 import BottomRightDiagram from "./Component/BottomRightDiagram";
-import {getLatestEnerydataById, getRealTimedatasById} from "../Service/getDatas";
+import {getLatestEnerydataById, getRealTimedatasById, fetchData} from "../Service/getDatas";
 
-export async  function stationLoader({params}) {
-    const {siteId, meterId} = params
-    return await getLatestEnerydataById(siteId, meterId)
+export async  function stationMonitorLoader({params}) {
+    const {siteID, meterID} = params
+    const eneryData = await getLatestEnerydataById(siteID, meterID)
+    const realTimeData = await getRealTimedatasById(siteID);  // PUE DATA
+    // TopMiddleDiagram Data
+    const currentSeries = await fetchData(`/api/datas/collectdatas/currentseriesdata/${siteID}`);
+    const temperatureSeries = new Array(currentSeries.timeSeries.length).fill(0)
+
+    return {eneryData, realTimeData, currentSeries, temperatureSeries}
 }
 
-function StationPage() {
+function StationMonitor() {
+    const navigate = useNavigate();
     // 获取数据 更新状态====================================================
     const stationData = useLoaderData();
-    //console.log('stationData');
+    //console.log(stationData);
     const { site, alarmReason, checkMonth, lastMeterReadingTime, currentMeterReadingTime,
         consumptionCheck, paymentCheck, currentPrice, lastConsumption, consumptionDailyCheck,
         production, business, office, scalar, superscalar, cuccShareRatio, cmccShareRatio,
         ctcShareRatio, supplyType, siteType, vestIn, siteID, meterID, responsibleDepartment,
         responsiblePerson, responsiblePhone, cuccSiteCode, consumptionStatus, photovoltaic,
-        transferStatus, payBehalfStatus, serviceCenter, gridName, responsiblePhone2} = stationData
+        transferStatus, payBehalfStatus, serviceCenter, gridName, responsiblePhone2} = stationData.eneryData
 
   // 站点管理数据
   const [station, setStation] = useState({name: site, siteID: siteID});
@@ -51,8 +58,16 @@ function StationPage() {
   const [pueData, setPueData] = useState({
       title: "实时数据",
       data: mockData.pueData,
-      realTimeData: mockData.realTimeData,
+      realTimeData: stationData.realTimeData
   })
+
+  // 中上图 State
+  const [topMiddleDiagram, setTopMiddleDiagram] = useState({
+      title: "日用电变化情况",
+      currentSeries: stationData.currentSeries,
+      temperatureSeries: stationData.temperatureSeries,
+  })
+
   // 站点信息
   const [stationInfoData, setStationInfoData] = useState({
       title: "网点信息",
@@ -202,7 +217,8 @@ function StationPage() {
       },
   })
   // UI显示控制数据
-  const [uiState, setUiState] = useState({displaySearchTableBar: false })
+  const [uiState, setUiState] = useState({
+      displaySearchTableBar: false, timeTitle: stationData.realTimeData.timeStr})
 
   // 测试用的方法
   const test = () => {
@@ -213,15 +229,29 @@ function StationPage() {
 
   }
 
+  const toggleSearchBar = () => {
+      setUiState(uiState => {
+          return {...uiState, displaySearchTableBar: !uiState.displaySearchTableBar}
+      })
+  }
+
 
   // useEffect
   useEffect(() => {
       const fetchRealTimeDatas = async () => {
           const data = await getRealTimedatasById(siteID);
-          console.log(data)
+          //console.log("RealTimeData: \n", data)
           setPueData(pueData =>{return {...pueData, realTimeData: data}})
+          setUiState(uiState =>{return {...uiState, timeTitle: data.timeStr}})
+          /* 更新topMiddleDiagram */
+          const currentSeries = await fetchData(`/api/datas/collectdatas/currentseriesdata/${siteID}`);
+          const temperatureSeries = new Array(currentSeries.timeSeries.length).fill(0)
+          setTopMiddleDiagram(topMiddleDiagram => {
+              return {...topMiddleDiagram, currentSeries: currentSeries, temperatureSeries: temperatureSeries}
+          })
+
       }
-      const realTimeDatasIntervalId = setInterval(fetchRealTimeDatas, 5000);
+      const realTimeDatasIntervalId = setInterval(fetchRealTimeDatas, 15000);
 
       return () => clearInterval(realTimeDatasIntervalId);
 
@@ -290,10 +320,12 @@ function StationPage() {
                                 <td style={{width: '15%', textAlign: 'right', paddingLeft: '10px',
                                     color: '#fff', fontSize: '14px', fontWeight: 'bold'}}
                                     id="td-data-date">
+                                    {uiState.timeTitle}
                                 </td>
                                 <td style={{width: '15%'}}>
-                                    <div className="cust-type-default right" onClick={test} type="2">监测控制</div>
-                                    <div className="cust-type-default left active" type="1">能耗分析</div>
+                                    <div className="cust-type-default right"
+                                         onClick={() => navigate(`/history/station/${siteID}/${meterID}`)} type="2">历史分析</div>
+                                    <div className="cust-type-default left active" type="1">实时监测</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -307,8 +339,7 @@ function StationPage() {
                     <Energy energyData={energyData}/>
                 </div>
                 <div className="col-sm-6 col-md-6 pd">
-                    <TopMiddleDiagram station={station} diagramData={{title: "日用电变化情况",
-                        currentSeries: mockData.currentSeries}}/>
+                    <TopMiddleDiagram station={station} diagramData={topMiddleDiagram}/>
                 </div>
                 <div className="col-sm-3 col-md-3 pd device-info-col">
                     <PUE pueData={pueData} />
@@ -330,4 +361,4 @@ function StationPage() {
   )
 }
 
-export default StationPage
+export default StationMonitor

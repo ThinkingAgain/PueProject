@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2024-06-28T01:37:10.015Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.5.3 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="Ovb6Kx7u6OLCdUYrH9qF" version="24.5.3" type="device" pages="17">
+<mxfile host="Electron" modified="2024-07-02T08:23:08.379Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.5.3 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="IvBLMuiPVAIKxSFnosOG" version="24.5.3" type="device" pages="17">
   <diagram id="3x3RfMyr-ZMe37Vij4fP" name="领域模型">
     <mxGraphModel dx="1034" dy="511" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -1572,7 +1572,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="c7VedUeV3csEc-935Tk3" name="网点页面">
-    <mxGraphModel dx="1020" dy="496" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="559" dy="328" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -1606,10 +1606,10 @@
         <mxCell id="qeq_ml4MP7bGGzYQom69-14" value="xxxx年xx月xx日" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="610" y="90" width="100" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="qeq_ml4MP7bGGzYQom69-15" value="PUE分析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0050ef;strokeColor=#001DBC;fontColor=#ffffff;" parent="1" vertex="1">
+        <mxCell id="qeq_ml4MP7bGGzYQom69-15" value="实时监测" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0050ef;strokeColor=#001DBC;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="717" y="101.25" width="53" height="17.5" as="geometry" />
         </mxCell>
-        <mxCell id="qeq_ml4MP7bGGzYQom69-17" value="监测控制" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="qeq_ml4MP7bGGzYQom69-17" value="历史分析" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="770" y="101.25" width="57" height="17.5" as="geometry" />
         </mxCell>
         <mxCell id="qeq_ml4MP7bGGzYQom69-18" value="线柱图 ( 电费柱&amp;nbsp; 日均电量线 )" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -1908,6 +1908,48 @@
         </mxCell>
         <mxCell id="nbID5_TaC84dWzo8KGVm-1" value="日历饼图 ( k1 k2电流对比 )" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="570" y="300" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-1" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="960" y="70" width="430" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-2" value="历史分析选择框" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="40" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-15" value="日分析" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.radioButton2;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;gradientColor=#DEDEDE;fillColor=#EDEDED;checked=1;spacing=5;checkedFill=#0085FC;checkedStroke=#ffffff;sketch=0;" vertex="1" parent="1">
+          <mxGeometry x="980" y="91.25" width="10" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-16" value="月分析" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.radioButton2;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;gradientColor=#DEDEDE;fillColor=#EDEDED;checked=0;spacing=5;checkedFill=#0085FC;checkedStroke=#ffffff;sketch=0;" vertex="1" parent="1">
+          <mxGeometry x="980" y="108.75" width="10" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-18" value="时间选择框" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=#999999;strokeWidth=1;fillColor=#FFFFFF;fontColor=#6C767D;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=10;fontSize=14;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="85.5" width="130" height="34.5" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-20" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;确认&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=#0085FC;strokeWidth=1;fillColor=none;fontColor=#0085FC;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=0;fontSize=16;spacing=5;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="98.75" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-21" value="点击&amp;lt;实时监测&amp;gt;: 1. 关闭[分析选择框]&amp;nbsp; 2. 高亮自身 3. 显示当日当时数据&lt;div&gt;点击&amp;lt;历史分析&amp;gt;: 1. 显示分析选择框&amp;nbsp; 2. 高亮自身&lt;/div&gt;" style="shape=note2;boundedLbl=1;whiteSpace=wrap;html=1;size=25;verticalAlign=top;align=left;" vertex="1" parent="1">
+          <mxGeometry x="900" y="290" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-22" value="" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="b0ZtM12o7FZN9GOLDMQQ-21" target="qeq_ml4MP7bGGzYQom69-17">
+          <mxGeometry width="60" relative="1" as="geometry">
+            <mxPoint x="920" y="270" as="sourcePoint" />
+            <mxPoint x="980" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-23" value="2种类型: 日/月&lt;div&gt;时间串-&amp;gt;请求数据&lt;/div&gt;" style="shape=note2;boundedLbl=1;whiteSpace=wrap;html=1;size=25;verticalAlign=top;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-24" value="dispatch" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;exitX=-0.011;exitY=0.633;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.358;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="b0ZtM12o7FZN9GOLDMQQ-23" target="b0ZtM12o7FZN9GOLDMQQ-1">
+          <mxGeometry width="60" relative="1" as="geometry">
+            <mxPoint x="1360" y="240" as="sourcePoint" />
+            <mxPoint x="1420" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-25" value="uiState{}&lt;div&gt;displayAnalysisbar: true/false&lt;/div&gt;&lt;div&gt;realTime: true/false&lt;/div&gt;&lt;div&gt;dateType: date/month&lt;/div&gt;&lt;div&gt;timeStr: string&lt;/div&gt;" style="shape=note2;boundedLbl=1;whiteSpace=wrap;html=1;size=25;verticalAlign=top;align=center;" vertex="1" parent="1">
+          <mxGeometry x="892.5" y="380" width="415" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="b0ZtM12o7FZN9GOLDMQQ-27" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;步骤(可考虑两个页面, 实时页面/历史页面)&lt;/h1&gt;&lt;p&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;1. 点击实时和历史两按钮, 切换两个页面.(标题: 实时数据监测&amp;nbsp; &amp;nbsp; &amp;nbsp;历史数据分析)&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;2. 修改searchtablebar为analysisbar(包括中文显示)&lt;br&gt;&lt;/p&gt;&lt;p&gt;3. analysisBar中点击和选择, 可正常更新uiState中的dateType和timestr&lt;/p&gt;&lt;p&gt;4. uiState状态变化能更新页面显示数据(实时数据请求定时器如何解决?)&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="420" width="470" height="170" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

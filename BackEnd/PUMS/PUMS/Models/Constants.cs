@@ -6,6 +6,7 @@
         public static readonly string HOUR = nameof(HOUR);
         public static readonly string DAY = nameof(DAY);
         public static readonly string MONTH = nameof(MONTH);
+        public static readonly string YEAR = nameof(YEAR);
 
         // Category常量
         public static readonly string POINT = nameof(POINT);
