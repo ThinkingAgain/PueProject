@@ -42,6 +42,6 @@
    ```csharp
    /*指定站点当日的Pue序列数据*/
    /api/datas/collectdatas/pueseriesdata/{siteId}
-   /*指定站点某日Pue序列数据*/
-   /api/datas/collectdatas/pueseriesdata/{siteId}/{dayTimeStr}
+   /*指定站点某时间类型和时间点的Pue序列数据*/
+   /api/datas/collectdatas/pueseriesdata/{siteId}/{timeType}/{timeStr}
    ```

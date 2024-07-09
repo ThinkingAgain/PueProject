@@ -6,7 +6,7 @@ export default function TopMiddleDiagram ({ station, diagramData } ) {
     const {siteID} = station;
     const { title, currentSeries, temperatureSeries } = diagramData
     useEffect(() => {
-        console.log(diagramData)
+        //console.log(diagramData)
         const option = {
             tooltip: {trigger: 'axis',axisPointer: {lineStyle: {color: '#fff'}}},
             legend: {

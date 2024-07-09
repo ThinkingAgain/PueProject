@@ -82,10 +82,10 @@ namespace PUMS.Services
                 rtd.TagCurrents.TryGetValue(Constants.BUSINESS, out float business);
                 rtd.TagCurrents.TryGetValue(Constants.LEASE, out float lease);
 
-                rtd.Proportions[Constants.PRODUCT] = product / total;
-                rtd.Proportions[Constants.OFFICE] = office / total;
-                rtd.Proportions[Constants.BUSINESS] = business / total;
-                rtd.Proportions[Constants.LEASE] = lease / total;
+                rtd.Proportions[Constants.PRODUCT] = product / (total - lease);
+                rtd.Proportions[Constants.OFFICE] = office / (total - lease);
+                rtd.Proportions[Constants.BUSINESS] = business / (total - lease);
+                //rtd.Proportions[Constants.LEASE] = lease / total;
             }
 
 
@@ -244,10 +244,10 @@ namespace PUMS.Services
             vectors.TryGetValue(Constants.BUSINESS, out float business);
             vectors.TryGetValue(Constants.LEASE, out float lease);
 
-            proportions[Constants.PRODUCT] = product / total;
-            proportions[Constants.OFFICE] = office / total;
-            proportions[Constants.BUSINESS] = business / total;
-            proportions[Constants.LEASE] = lease / total;
+            proportions[Constants.PRODUCT] = product / (total - lease);
+            proportions[Constants.OFFICE] = office / (total - lease);
+            proportions[Constants.BUSINESS] = business / (total - lease);
+            //proportions[Constants.LEASE] = lease / total;
 
             return proportions;
         }

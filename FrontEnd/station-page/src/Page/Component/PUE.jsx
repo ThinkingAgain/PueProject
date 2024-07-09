@@ -78,7 +78,7 @@ export default function PUE({ pueData }) {
                                             </td>
                                         </tr>
                                         <tr className="device-use">
-                                            {/*<td></td>*/}
+                                            <td></td>
 
                                             <td>
                                                 <div className="nei-cun-size">
@@ -91,19 +91,19 @@ export default function PUE({ pueData }) {
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className="cpu-use">
+                                                <div className="nei-cun-use">
                                                     <span>{`${(realTimeData.proportions.OFFICE * 100).toFixed(1)}%` || 0}</span>
                                                 </div>
                                             </td>
-                                            <td>
+                                           {/* <td>
                                                 <div className="nei-cun-use">
                                                     <span>{`${(realTimeData.proportions.LEASE * 100).toFixed(1)}%` || 0}</span>
                                                 </div>
-                                            </td>
+                                            </td>*/}
 
                                         </tr>
                                         <tr>
-                                             {/*<td></td>*/}
+                                             <td></td>
 
                                             <td>
                                                 <div className="labe-value">&nbsp;&nbsp;生 产 耗 能</div>
@@ -114,19 +114,19 @@ export default function PUE({ pueData }) {
                                             <td>
                                                 <div className="labe-value">&nbsp;&nbsp;办 公 耗 能</div>
                                             </td>
-                                            <td>
+                                            {/*<td>
                                                 <div className="labe-value">&nbsp;&nbsp;外 租 耗 能</div>
-                                            </td>
+                                            </td>*/}
 
                                         </tr>
                                         <tr className="device-use">
-                                             {/*<td></td>*/}
+                                             <td></td>
 
-                                            <td>
+                                            {/*<td>
                                                 <div className="nei-cun-size"><span>{item.outsideTemperature || 0}</span></div>
-                                            </td>
+                                            </td>*/}
                                             <td>
-                                                <div className="cpu-use"><span>{item.temperature || 0}</span></div>
+                                                <div className="nei-cun-size"><span>{item.temperature || 0}</span></div>
                                             </td>
                                             <td>
                                                 <div className="cpu-use"><span>{item.humidity || 0}</span></div>
@@ -137,10 +137,10 @@ export default function PUE({ pueData }) {
                                             </td>
                                         </tr>
                                         <tr>
-                                            {/*<td></td>*/}
-                                            <td>
+                                            <td></td>
+                                            {/*<td>
                                             <div className="labe-value">&nbsp;&nbsp;室 外 温 度</div>
-                                            </td>
+                                            </td>*/}
                                             <td>
                                                 <div className="labe-value">&nbsp;&nbsp;机 房 温 度</div>
                                             </td>

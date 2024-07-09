@@ -21,8 +21,10 @@ export async  function historyAnalysisLoader({params}) {
     // TopMiddleDiagram Data
     const currentSeries = await fetchData(`/api/datas/collectdatas/currentseriesdata/${siteID}/day/${lastDayStr}`);
     const temperatureSeries = new Array(currentSeries.timeSeries.length).fill(0)
+    // BottomMiddleDiagram Data
+    const pueSeries = await fetchData(`/api/datas/collectdatas/pueseriesdata/${siteID}/day/${lastDayStr}`);
 
-    return {eneryData, lastDayData, currentSeries, temperatureSeries}
+    return {eneryData, lastDayData, currentSeries, temperatureSeries, pueSeries}
 }
 
 function HistoryAnalysis() {
@@ -50,9 +52,9 @@ function HistoryAnalysis() {
             degree: "3.96分",  // 健康度打分
             consumptionOfLastPeriod: `${Number.parseInt(lastConsumption)}度`,//"5434度",  // 上期电量
             consumptionOfDay: `${parseFloat(consumptionDailyCheck)}度`,//"187.31度",  // 日均电量
-            produceEnergy: `${Number.parseInt(production)}度`,//"4807度",   // 生产用电
-            businessEnergy: `${Number.parseInt(business)}度`,//"534度",    // 营业用电
-            officeEnergy: `${Number.parseInt(office)}度`,//"534度",    // 办公用电
+            produceEnergy: `${(production * 100 / paymentCheck).toFixed(1)}%`, //`${Number.parseInt(production)}元`,//"4807度",   // 生产用电
+            businessEnergy: `${(business * 100 / paymentCheck).toFixed(1)}%`,//`${Number.parseInt(business)}元`,//"534度",    // 营业用电
+            officeEnergy: `${(office * 100 / paymentCheck).toFixed(1)}%`,//`${Number.parseInt(office)}元`,//"534度",    // 办公用电
             benchmarkData: {  //对标环形图数据
                 currval: scalar, //"4052",//生产标 - 环形的红色部分(红色+灰色为整个环, 红色部分的占比为: currval/(currval+maxval))
                 maxval: `${scalar*100/superscalar - scalar}`,//"4680", // 环形的灰色部分 计算公式为(生产标/超标比例 - 生产标)
@@ -61,16 +63,22 @@ function HistoryAnalysis() {
         });
     // PUE数据
     const [pueData, setPueData] = useState({
-        title: "实时数据",
+        title: "统计数据",
         data: mockData.pueData,
         realTimeData: stationData.lastDayData,
     })
 
     // 中上图 State
     const [topMiddleDiagram, setTopMiddleDiagram] = useState({
-        title: "日用电变化情况",
+        title: "用电变化情况",
         currentSeries: stationData.currentSeries,
         temperatureSeries: stationData.temperatureSeries,
+    })
+
+    // 中下图 State
+    const [bottomMiddleDiagram, setBottomMiddleDiagram] = useState({
+        title: "PUE变化情况",
+        pueSeries: stationData.pueSeries
     })
 
     // 站点信息
@@ -259,6 +267,11 @@ function HistoryAnalysis() {
         setTopMiddleDiagram(topMiddleDiagram => {
             return {...topMiddleDiagram, currentSeries: currentSeries, temperatureSeries: temperatureSeries}
         })
+        /* 请求 BottomMiddleDiagram 数据*/
+        const pueSeries = await fetchData(`/api/datas/collectdatas/pueseriesdata/${siteID}/${dtypeDic[uiState.timeRadioValue]}/${dateString}`);
+        setBottomMiddleDiagram(bottomMiddleDiagram => {
+            return {...bottomMiddleDiagram, pueSeries: pueSeries}
+        })
 
     }
 
@@ -374,8 +387,7 @@ function HistoryAnalysis() {
                         <StationInfo stationInfoData={stationInfoData} />
                     </div>
                     <div className="col-sm-5 col-md-5 pd time-step-col">
-                        <BottomMiddleDiagram station={station} diagramData={{title: "PUE日变化情况",
-                            pueSeries: mockData.pueSeries}} />
+                        <BottomMiddleDiagram station={station} diagramData={bottomMiddleDiagram} />
                     </div>
                     <div className="col-sm-4 col-md-4 pd business-type-time-col">
                         <BottomRightDiagram diagramData={{title: "空调运行同比分析", data: mockData.timeStepAnalysis}} />

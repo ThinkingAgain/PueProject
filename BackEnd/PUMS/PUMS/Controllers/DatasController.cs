@@ -93,20 +93,24 @@ namespace PUMS.Controllers
         /// 指定站点某日的PUE序列数据, 默认为当日
         /// </summary>
         /// <param name="siteId"></param>
-        /// <param name="dayTimeStr"></param>
+        /// <param name="timeStr"></param>
         /// <returns></returns>
         [HttpGet("collectdatas/pueseriesdata/{siteId}")]
-        [HttpGet("collectdatas/pueseriesdata/{siteId}/{dayTimeStr}")]
-        public ActionResult GetPueSeriesData(string siteId, string? dayTimeStr)
+        [HttpGet("collectdatas/pueseriesdata/{siteId}/{timeType}/{timeStr}")]
+        public ActionResult GetPueSeriesData(string siteId, string? timeType,
+            string? timeStr)
         {
-            var currentSeries = _service.getVectorSeriesOfOneDay(siteId, 
-                                        dayTimeStr ?? DateTime.Today.ToString("yyyy-MM-dd"));
-            
+            VectorSeries series;
+            if (String.IsNullOrEmpty(timeType) || String.IsNullOrEmpty(timeStr))            
+                series = _service.getVectorSeriesOfOneDay(siteId, DateTime.Today.ToString("yyyy-MM-dd"));            
+            else            
+                series = _service.getVectorSeries(siteId, timeType.ToUpper(), timeStr);
+              
             return Ok(new { 
-                timeSeries = currentSeries.TimeSeries,
-                product = currentSeries.Product,
-                device = currentSeries.Device,
-                pue = currentSeries.Pue
+                timeSeries = series.TimeSeries,
+                product = series.Product,
+                device = series.Device,
+                pue = series.Pue
             });
         }
 
