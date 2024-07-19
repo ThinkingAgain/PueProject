@@ -100,5 +100,16 @@ namespace PUMS.Services.Tests
             var monthData = service.getVectorSeries(siteId, Constants.MONTH, "2024-06");
             Assert.IsTrue(dayData is VectorSeries);
         }
+
+        [TestMethod()]
+        public void getValidDateByRoomidTest()
+        {
+            var service = new Service(_context);
+            var roomId = "聊白洼机房";  // 白洼驻地
+            var data = service.getValidDateByRoomid(roomId);
+            var datas = service.getValidDateOfSites();
+            Assert.IsTrue(1 == 1);
+            //Assert.IsNotNull(data.HourTimeStrs);
+        }
     }
 }

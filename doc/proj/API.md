@@ -45,3 +45,17 @@
    /*指定站点某时间类型和时间点的Pue序列数据*/
    /api/datas/collectdatas/pueseriesdata/{siteId}/{timeType}/{timeStr}
    ```
+
+6. 站点列表 - 取自site_rooms
+   
+   ```csharp
+   /*site_rooms中数据*/
+   /api/datas/collectdatas/sitedatas
+   ```
+
+7. 站点有效采集数据日期的字典
+   
+   ```csharp
+   /*指定站点的有效采集数据<SiteValidDate> 默认为全部站点的List<SiteValidDate> */
+   /api/datas/collectdatas/sitevaliddates/{siteId}
+   ```

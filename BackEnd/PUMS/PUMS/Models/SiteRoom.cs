@@ -19,5 +19,9 @@ namespace PUMS.Models
         [Display(Name = "站点名称")]
         [Column("site")]
         public string? Site { get; set; }
+
+        [Display(Name = "电表ID")]
+        [Column("meter_id")]
+        public string? MeterID { get; set; }
     }
 }

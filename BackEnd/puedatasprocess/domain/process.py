@@ -100,6 +100,9 @@ class HourlyProcess(IProcess):
 
         # 采集数据放入tag_dic
         for cld in collectData_list:
+            # todo 对于tag为*的情况可这样处理：
+            #  1. 判断(cld.roomid, cld.group，cld.field) in tag_dic? yes -> store ， no -> goto 2.
+            #  2. 判断(cld.roomid, cld.group, *) in tag_dic? yes -> store
             if (cld.roomid, cld.group, cld.field) in tag_dic:
                 tag_dic[(cld.roomid, cld.group, cld.field)]['currents'].append(cld.value)
 

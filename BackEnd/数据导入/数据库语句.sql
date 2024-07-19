@@ -152,8 +152,9 @@ CREATE TABLE current_datas
 CREATE TABLE site_rooms
     (
         site_id varchar(60) not null,
-		roomid  varchar(60) not null ,
-		site    varchar(200),      
+		roomid  varchar(100) not null,
+		site    varchar(200) not null,
+		meter_id varchar(60) not null,
         primary key (site_id,roomid)
 	);
 	

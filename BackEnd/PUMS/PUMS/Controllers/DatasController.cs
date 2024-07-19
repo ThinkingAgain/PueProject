@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using PUMS.Data;
 using PUMS.Models;
 using PUMS.Services;
@@ -112,6 +113,31 @@ namespace PUMS.Controllers
                 device = series.Device,
                 pue = series.Pue
             });
+        }
+
+        /// <summary>
+        /// 返回站点配置信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("collectdatas/sitedatas")]
+        public ActionResult<IEnumerable<SiteRoom>> GetSiteRooms()
+        {
+            return _datasContext.siteRooms.ToList();
+        }
+
+        /// <summary>
+        /// 返回指定站点的有效采集数据日期，分为时(只查询当日的有效时数据), 日, 月,年四类
+        /// 无roomid则返回所有站点（指current_datas中有的站点）的有效采集数据日期
+        /// </summary>
+        /// <param name="roomid"></param>
+        /// <returns></returns>
+        [HttpGet("collectdatas/sitevaliddates")]
+        [HttpGet("collectdatas/sitevaliddates/{siteId?}")]
+        public ActionResult<IEnumerable<SiteValidDate>> GetSiteValidDates(string? siteId)
+        {
+            if (siteId.IsNullOrEmpty())
+                return _service.getValidDateOfSites();
+            return new List<SiteValidDate> { _service.getValidDateBySiteId(siteId) };
         }
 
 

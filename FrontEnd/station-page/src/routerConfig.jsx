@@ -1,11 +1,13 @@
 import MainPage from "./Page/MainPage";
 import StationMonitor, {stationMonitorLoader} from "./Page/StationMonitor.jsx";
 import HistoryAnalysis, {historyAnalysisLoader} from "./Page/HistoryAnalysis.jsx";
+import StationCardsPage, {stationCardsPageLoader} from "./Page/StationCardsPage.jsx";
 
 const routerConfig = [
     {
         path: "/",
-        element: <MainPage/>,
+        element: <StationCardsPage/>,
+        loader: stationCardsPageLoader,
         errorElement: <div>错误!</div>,
     },
     {

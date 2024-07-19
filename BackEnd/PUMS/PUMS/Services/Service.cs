@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using PUMS.Data;
 using PUMS.Models;
 using System.Globalization;
 using System.Linq;
+using System.Security.Policy;
 
 namespace PUMS.Services
 {
@@ -85,7 +87,7 @@ namespace PUMS.Services
                 rtd.Proportions[Constants.PRODUCT] = product / (total - lease);
                 rtd.Proportions[Constants.OFFICE] = office / (total - lease);
                 rtd.Proportions[Constants.BUSINESS] = business / (total - lease);
-                //rtd.Proportions[Constants.LEASE] = lease / total;
+                rtd.Proportions[Constants.LEASE] = lease / total;
             }
 
 
@@ -216,6 +218,154 @@ namespace PUMS.Services
 
 
         /// <summary>
+        /// 获取指定站点的有效采集数据的日期列表, 分为时(只查询当日的有效时数据), 日, 月,年四类
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
+        public SiteValidDate getValidDateBySiteId(string? siteId)
+        {
+            /*var todayStr = DateTime.Today.ToString("yyyy-MM-dd");
+            var currentMonthStr = DateTime.Today.ToString("yyyy-MM");
+            var currentYearStr = DateTime.Today.ToString("yyyy");
+
+            // 1. 当日的小时列表
+            var hours = _context.CurrentDatas
+                .Where(c => c.RoomID == roomid && c.DType == Constants.HOUR
+                    && c.Category == Constants.VECTOR
+                    && c.TimeStr.StartsWith(todayStr))
+                .Select(c => c.TimeStr)
+                .Distinct()
+                .ToList();
+
+            // 2. 日列表, 再加上当日的判断
+            var days = _context.CurrentDatas
+                .Where(c => c.RoomID == roomid && c.DType == Constants.DAY
+                    && c.Category == Constants.VECTOR)
+                .Select(c => c.TimeStr)
+                .Distinct()
+                .ToList();
+            if (hours.Count > 0)  days.Add(todayStr);
+
+            // 3. 月列表, 再加上当月的判断
+            var months = _context.CurrentDatas
+                .Where(c => c.RoomID == roomid && c.DType == Constants.MONTH
+                    && c.Category == Constants.VECTOR)
+                .Select(c => c.TimeStr)
+                .Distinct()
+                .ToList();
+            if (days.Any(d => d.StartsWith(currentMonthStr)))
+                months.Add(currentMonthStr);
+
+            // 4. 年列表, 再加上当年的判断
+            var years = _context.CurrentDatas
+                .Where(c => c.RoomID == roomid && c.DType == Constants.YEAR
+                    && c.Category == Constants.VECTOR)
+                .Select(c => c.TimeStr)
+                .Distinct()
+                .ToList();
+            if (months.Any(d => d.StartsWith(currentYearStr)))
+                years.Add(currentYearStr);
+
+            return new SiteValidDate
+                        {
+                            RoomID = roomid,
+                            HourTimeStrs = hours,
+                            DayTimeStrs = days,
+                            MonthTimeStrs = months,
+                            YearTimeStrs = years
+                        };*/
+            if (siteId.IsNullOrEmpty()) return new SiteValidDate();
+
+            var siteRoom = _context.siteRooms.Where(s => s.SiteID == siteId).FirstOrDefault();
+            if (siteRoom != null)
+            {
+                return GenValidDate(siteRoom.RoomID,
+                _context.CurrentDatas.Where(c => c.Category == Constants.VECTOR
+                                                && c.RoomID == siteRoom.RoomID));
+            }
+            return new SiteValidDate();
+        }
+
+        /// <summary>
+        /// 获取current_datas中所有有效采集日期的SiteValidDate集合
+        /// </summary>
+        /// <returns></returns>
+        public List<SiteValidDate> getValidDateOfSites()
+        {
+           
+            var datas = new List<SiteValidDate>();
+            var roomGroup = _context.CurrentDatas
+                .Where(c => c.Category == Constants.VECTOR)
+                .GroupBy(c => c.RoomID);
+
+            foreach (var g in roomGroup)
+            {
+                datas.Add(GenValidDate(g.Key, g));
+            }
+
+            return datas;
+
+        }
+
+        /// <summary>
+        /// 静态方法: 按照约定的规则生成单个站点的ValidDate数据
+        /// </summary>
+        /// <param name="roomid"></param>
+        /// <param name="query">指定roomid的currentData数据</param>
+        /// <returns></returns>
+        public static  SiteValidDate GenValidDate(string roomid,
+            IEnumerable<CurrentData> query)
+        {
+            var todayStr = DateTime.Today.ToString("yyyy-MM-dd");
+            var currentMonthStr = DateTime.Today.ToString("yyyy-MM");
+            var currentYearStr = DateTime.Today.ToString("yyyy");
+
+            
+
+            // 1. 当日的小时列表
+            var hours = query.AsEnumerable()
+                .Where(c => c.DType == Constants.HOUR && c.TimeStr.StartsWith(todayStr))
+                .Select(c => c.TimeStr)
+                .Distinct()
+                .ToList();
+
+            // 2. 日列表, 再加上当日的判断
+            var days = query.AsEnumerable()
+                .Where(c => c.DType == Constants.DAY)
+                .Select(c => c.TimeStr)
+                .Distinct()
+                .ToList();
+            if (hours.Count > 0) days.Add(todayStr);
+
+            // 3. 月列表, 再加上当月的判断
+            var months = query.AsEnumerable()
+                .Where(c => c.DType == Constants.MONTH)
+                .Select(c => c.TimeStr)
+                .Distinct()
+                .ToList();
+            if (days.Any(d => d.StartsWith(currentMonthStr)))
+                months.Add(currentMonthStr);
+
+            // 4. 年列表, 再加上当年的判断
+            var years = query.AsEnumerable()
+                .Where(c => c.DType == Constants.YEAR)
+                .Select(c => c.TimeStr)
+                .Distinct()
+                .ToList();
+            if (months.Any(d => d.StartsWith(currentYearStr)))
+                years.Add(currentYearStr);
+
+            return new SiteValidDate
+            {
+                RoomID = roomid,
+                HourTimeStrs = hours,
+                DayTimeStrs = days,
+                MonthTimeStrs = months,
+                YearTimeStrs = years
+            };
+        }
+
+        /// <summary>
         /// 将"2024-05-22-09"字串转换为"5月22日9时"
         /// </summary>
         /// <param name="timeStr"></param>
@@ -238,16 +388,27 @@ namespace PUMS.Services
         {
             var proportions = new Dictionary<string, float>();
 
+            
             vectors.TryGetValue(Constants.TOTAL, out float total);
             vectors.TryGetValue(Constants.PRODUCT, out float product);
             vectors.TryGetValue(Constants.OFFICE, out float office);
             vectors.TryGetValue(Constants.BUSINESS, out float business);
             vectors.TryGetValue(Constants.LEASE, out float lease);
 
-            proportions[Constants.PRODUCT] = product / (total - lease);
-            proportions[Constants.OFFICE] = office / (total - lease);
-            proportions[Constants.BUSINESS] = business / (total - lease);
-            //proportions[Constants.LEASE] = lease / total;
+            if (total > 0 && total - lease > 0)
+            {
+                proportions[Constants.PRODUCT] = product / (total - lease);
+                proportions[Constants.OFFICE] = office / (total - lease);
+                proportions[Constants.BUSINESS] = business / (total - lease);
+                proportions[Constants.LEASE] = lease / total;
+            
+            }else
+            {
+                proportions[Constants.PRODUCT] = 0;
+                proportions[Constants.OFFICE] = 0;
+                proportions[Constants.BUSINESS] = 0;
+                proportions[Constants.LEASE] = 0;
+            }
 
             return proportions;
         }

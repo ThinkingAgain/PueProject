@@ -254,7 +254,7 @@ function HistoryAnalysis() {
     }
 
     const timePickerChange = async (date, dateString) => {
-        console.log(date, dateString);
+        //console.log(date, dateString);
         const dtypeDic = {'date': 'DAY', 'month': "MONTH"}
         /* 请求 相应时间的 PUE 数据 */
         const newPueData = await fetchData(
@@ -322,10 +322,10 @@ function HistoryAnalysis() {
                         picker={uiState.timeRadioValue}
                         minDate={dayjs('2024-06-24', 'YYYY-MM-DD')}
                         maxDate={
-                            uiState.timeRadioValue === 'date' ?
+                            /*uiState.timeRadioValue === 'date' ?
                              dayjs().subtract(1, 'day') :
                                 uiState.timeRadioValue === 'month' ?
-                                    dayjs().subtract(1, 'month'):
+                                    dayjs().subtract(1, 'month'):*/
                                     dayjs().subtract(1, 'day')
                         }
                         onChange={timePickerChange}/>

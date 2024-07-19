@@ -13,10 +13,11 @@ namespace PUMS.Controllers
             _logger = logger;
         }
 
-        //[Route("")]
-        //[Route("Home")]
-        //[Route("Home/Index")]
-        //[Route("station/{siteId?}/{meterId?}")]
+        [Route("")]
+        [Route("Home")]
+        [Route("Home/Index")]
+        [Route("station/{siteId?}/{meterId?}")]
+        [Route("history/station/{siteId?}/{meterId?}")]
         public IActionResult Index()
         {
             return View();
