@@ -1,5 +1,6 @@
 import { Tag, Badge } from 'antd'
 import dayjs from "dayjs";
+import { NavLink } from 'react-router-dom'
 import {fetchData, getLatestEnerydataById, getRealTimedatasById} from "../Service/getDatas.jsx";
 import {useLoaderData} from "react-router-dom";
 
@@ -36,16 +37,18 @@ const stationCardsPage = () => {
                         const title = day.format("M-D")
                         const dayStr = day.format("YYYY-MM-DD")
                         return(
-                            <Tag color={validDays.includes(dayStr) ? "#87d068": "gray"} className="shadow-md">
+                            <Tag key={title} color={validDays.includes(dayStr) ? "#87d068": "gray"} className="shadow-md">
                                 {title}
                             </Tag>
                         )
                     })
                     return (
-                        <div className="bg-[#eff0ff] flex flex-col items-start
+                        <div key={station.siteID} className="bg-[#eff0ff] flex flex-col items-start
                 rounded-[2rem] p-16   max-w-screen-sm text-center">
-                            <h2 className="text-[#2b1c50] text-xl mb-2
-                   border-[#d1d1f7] border-b-2 pb-1 w-full">{station.site}</h2>
+                            <NavLink to={`station/${station.siteID}/${station.meterID}`}
+                                     className="text-[#2b1c50] text-xl mb-2 border-[#d1d1f7] border-b-2 pb-1 w-full">
+                                {station.roomID}
+                            </NavLink>
                             <p className="font-bold mb-2 w-full">近七日数据采集情况:</p>
 
                             <div className="grid grid-cols-3 items-center gap-1
