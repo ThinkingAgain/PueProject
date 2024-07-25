@@ -4,14 +4,18 @@ import {fetchData} from "../../Service/getDatas.jsx";
 
 export default function BottomMiddleDiagram ({ station, diagramData } ) {
     const {siteID} = station;
-    const { title, data, pueSeries } = diagramData
+    const { title, pueSeries } = diagramData
     useEffect(() => {
+        console.log(pueSeries)
+        /* 生成非设备用电序列 */
+        const nonDevice = pueSeries.product.map((item, i) => (item - pueSeries.device[i]).toFixed(2))
+        console.log(nonDevice)
         const option = {
             title : {text:'',subtext:'',top:'3',right:'0'},
             legend: {
                 icon: 'rect',
                 itemWidth: 14,itemHeight: 5,itemGap:10,
-                data: ['PUE', '设备用电'],
+                data: ['PUE', '非设备用电'],
                 right: '10px',top: '0px',
                 textStyle: {fontSize: 12,color: '#fff'}
             },
@@ -25,7 +29,7 @@ export default function BottomMiddleDiagram ({ station, diagramData } ) {
             },
             yAxis:[
                 {
-                    type: 'value',name: '', //max:1.6,min: 0.6,
+                    type: 'value',name: '', min:0.9, //max:1.6,min: 0.6,
                     axisLine: {lineStyle: {color: '#57617B'}},
                     axisLabel: {margin: 10,textStyle: {fontSize: 12, color:'#fff'},formatter:'{value}'},
                     splitLine: {show: false}
@@ -67,7 +71,7 @@ export default function BottomMiddleDiagram ({ station, diagramData } ) {
                     data: pueSeries.pue//data.avgTime
                 },
                 {
-                    name:'设备用电',
+                    name:'非设备用电',
                     type:'bar',
                     barWidth:12,
                     yAxisIndex:1,
@@ -84,7 +88,7 @@ export default function BottomMiddleDiagram ({ station, diagramData } ) {
                             shadowColor: 'rgba(0, 0, 0, 0.1)',
                         }
                     },
-                    data: pueSeries.device//data.orderNum
+                    data: nonDevice//data.orderNum
                 }
             ]
         };
@@ -92,8 +96,8 @@ export default function BottomMiddleDiagram ({ station, diagramData } ) {
         myChart.clear();
         myChart.setOption(option);
 
-        /* 定时更新 */
-        const fetchDiagramData =  async () => {
+        /* 去掉 -> 定时更新 */
+        /*const fetchDiagramData =  async () => {
             const data = await fetchData(`/api/datas/collectdatas/pueseriesdata/${siteID}`);
             //console.log(data)
 
@@ -106,11 +110,11 @@ export default function BottomMiddleDiagram ({ station, diagramData } ) {
         }
         const diagramIntervalId = setInterval(fetchDiagramData, 11000);
 
-        return () => clearInterval(diagramIntervalId);
+        return () => clearInterval(diagramIntervalId);*/
 
 
 
-    }, [title])
+    }, [title, pueSeries])
     return (
         <div className="col-info">
             <div className="title">{title}</div>

@@ -140,10 +140,11 @@ CREATE TABLE current_datas
     (
         roomid  varchar(60) not null ,
 		timestr    varchar(30) not null ,
-        dtype  varchar(30) not null,  /* HOUR/DAY */
+        dtype  varchar(30) not null,  /* HOUR/DAY/MONTH */
+		category varchar(30) not null,  /* TAG/POINT/VECTOR */
         tag   varchar(200) not null,  /* TOTAL/PRODUCT/DEVICE/BUSINESS/OFFICE/LEASE */
 		current		float,
-        primary key (roomid,timestr,dtype,tag)
+        primary key (roomid,timestr,dtype,category,tag)
 	);
 	
 
@@ -151,7 +152,33 @@ CREATE TABLE current_datas
 CREATE TABLE site_rooms
     (
         site_id varchar(60) not null,
-		roomid  varchar(60) not null ,
-		site    varchar(200),      
+		roomid  varchar(100) not null,
+		site    varchar(200) not null,
+		meter_id varchar(60) not null,
         primary key (site_id,roomid)
 	);
+	
+
+/* collector  采集元数据定义: 采集标签与采集点的对应关系 tag -> collectpoint  */
+CREATE TABLE collector
+    (
+        roomid  varchar(60) not null ,
+		groupid varchar(200) not null,
+		tag    varchar(200) not null, 
+		collectpoint varchar(60),
+        primary key (roomid,groupid,tag)
+	);
+	
+
+	
+
+/* vector_formula   vector是指TOTAL/PRODUCT/DEVICE/BUSINESS/OFFICE/LEASE, 本表定义如何用采集点数据计算出vector */
+CREATE TABLE vector_formula
+    (
+        roomid  varchar(60) not null,
+		vector varchar(60) not null,
+		formula varchar(300),      
+        primary key (roomid,vector)
+	);
+	
+

@@ -1,6 +1,6 @@
 ﻿namespace PUMS.Models
 {
-    public class CurrentSeries
+    public class VectorSeries
     {
         public List<string> TimeSeries { get; set; } = new List<string>();
         public List<float> Total { get; set; } = new List<float>();
@@ -9,5 +9,6 @@
         public List<float> Business { get; set; } = new List<float>();
         public List<float> Lease { get; set; } = new List<float>();
         public List<float> Device { get; set; } = new List<float>();
+        public List<float> Pue { get; set; } = new List<float>();
     }
 }

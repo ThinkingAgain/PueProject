@@ -287,9 +287,10 @@ export const data={
                     "deviceCurrent": "43.2A",
                     "dcv": "53V",
                     "loadCurrent": "213A",
-                    "airConditionerStatus": "制冷",
-                    "temperature": "30℃",
-                    "humidity": "50%",
+                    "airConditionerStatus": "--",//"制冷",
+                    "outsideTemperature": "--℃",//"40℃",
+                    "temperature": "--℃",//"30℃",
+                    "humidity": "--%",//"50%",
                     "airConfidtrionerTemperature": "32℃",
 
                 },
@@ -348,9 +349,9 @@ export const data={
                     "up":"0Mbps"
                 }   */
         ],
-        "Ua":"238v",
-        "Ub":"256v",
-        "Uc":"223v"
+        "Ua":"---v", //"238v",
+        "Ub":"---v", //"256v",
+        "Uc":"---v", //"223v"
     },
     "channelHandleInfo":{
         "orderNumData":[
@@ -519,13 +520,13 @@ export const data={
         "roomID": "",
         "site": "",
         "timeStr": "",
-        "pue": 1.1234,
         "tagCurrents": {
             "DEVICE": 79.2949,
             "LEASE": 25,
             "OFFICE": 27.7455,
             "PRODUCT": 92.2545,
-            "TOTAL": 145
+            "TOTAL": 145,
+            "PUE": 1.56834
         },
         "proportions": {
             "PRODUCT": 0.6362379,

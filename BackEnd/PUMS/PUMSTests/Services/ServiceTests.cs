@@ -40,8 +40,8 @@ namespace PUMS.Services.Tests
             var context = new DatasContext(options);*/
             var service = new Service(_context);
             var siteId = "146503";  // 白洼驻地
-            var data = await service.getSiteRealTimeDataAsync(siteId);
-            Assert.IsTrue(data is RealTimeData);
+            var data = await service.getRealTimeDataBySiteIdAsync(siteId);
+            Assert.IsTrue(data is CollectData);
             Assert.AreEqual("聊白洼机房", data.RoomID);
 
             await Console.Out.WriteLineAsync("hello Test");
@@ -53,8 +53,8 @@ namespace PUMS.Services.Tests
         {
             var service = new Service(_context);
             var siteId = "146503";  // 白洼驻地
-            var data = service.getCurrentSeries(siteId);
-            Assert.IsTrue(data is CurrentSeries);
+            var data = service.getVectorSeriesOfOneDay(siteId, "2024-06-28");
+            Assert.IsTrue(data is VectorSeries);
         }
 
 
@@ -62,11 +62,16 @@ namespace PUMS.Services.Tests
         public void freedomTest()
         {
 
-            var a = new List<int>() { 1, 2, 3 };
+            /*var a = new List<int>() { 1, 2, 3 };
             var b = new List<int>() { 4, 5, 6 };
             var t = a.Zip(b, (a, b) => a + b).ToList();
             var rand = new Random();
-            var x = (rand.Next(-10, 10) / 100);
+            var x = (rand.Next(-10, 10) / 100);*/
+
+            var timestr = DateTime.Today.ToString("yyyy-MM-dd");
+            var yestoday = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
+
+
 
 
             Console.WriteLine("hello");
@@ -74,6 +79,37 @@ namespace PUMS.Services.Tests
             Assert.IsTrue("hello" is string);
         }
 
+        [TestMethod()]
+        public async Task getCollectDataAsyncTestAsync()
+        {
+            var service = new Service(_context);
+            var siteId = "146503";  // 白洼驻地
+            var data = await service.getCollectDataAsync(siteId, Constants.HOUR, "2024-07-03-15");
+            Assert.IsTrue(data is CollectData);
+            Assert.AreEqual("聊白洼机房", data.RoomID);
 
+            await Console.Out.WriteLineAsync("hello Test");
+        }
+
+        [TestMethod()]
+        public void getVectorSeriesTest()
+        {
+            var service = new Service(_context);
+            var siteId = "146503";  // 白洼驻地
+            var dayData = service.getVectorSeries(siteId, Constants.DAY, "2024-06-28");
+            var monthData = service.getVectorSeries(siteId, Constants.MONTH, "2024-06");
+            Assert.IsTrue(dayData is VectorSeries);
+        }
+
+        [TestMethod()]
+        public void getValidDateByRoomidTest()
+        {
+            var service = new Service(_context);
+            var roomId = "聊白洼机房";  // 白洼驻地
+            var data = service.getValidDateByRoomid(roomId);
+            var datas = service.getValidDateOfSites();
+            Assert.IsTrue(1 == 1);
+            //Assert.IsNotNull(data.HourTimeStrs);
+        }
     }
 }

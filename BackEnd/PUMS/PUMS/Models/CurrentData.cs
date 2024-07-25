@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PUMS.Models
 {
     [Table("current_datas")]
-    [PrimaryKey(nameof(RoomID), nameof(TimeStr), nameof(DType), nameof(Tag))]
+    [PrimaryKey(nameof(RoomID), nameof(TimeStr), nameof(DType), nameof(Category), nameof(Tag))]
     public class CurrentData
     {
         [Display(Name = "采集机房")]
@@ -16,9 +16,13 @@ namespace PUMS.Models
         [Column("timestr")]
         public string TimeStr { get; set; } = string.Empty;
 
-        [Display(Name = "数据类型")]
+        [Display(Name = "时间类型")]
         [Column("dtype")]
         public string DType { get; set; } = string.Empty;
+
+        [Display(Name = "数据类型")]
+        [Column("category")]
+        public string Category { get; set; } = string.Empty;
 
         [Display(Name = "数据标签")]
         [Column("tag")]
