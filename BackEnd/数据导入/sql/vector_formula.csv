@@ -1,0 +1,8 @@
+roomid,vector,formula
+聊白洼机房,TOTAL,{A1}+{A2}
+聊白洼机房,PRODUCT,{B1}+{B2}
+聊白洼机房,DEVICE,{C1}+{D1}
+聊白洼机房,OFFICE,{A2}-{B1}-{B2}
+聊白洼机房,LEASE,{A1}
+聊白洼机房,BUSINESS,0
+聊白洼机房,PUE,({B1}+{B2})/({C1}+{D1})

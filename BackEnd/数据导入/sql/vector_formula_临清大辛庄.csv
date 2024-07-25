@@ -1,0 +1,8 @@
+﻿roomid,vector,formula
+临大辛庄机房,BUSINESS,{B}
+临大辛庄机房,DEVICE,{D}
+临大辛庄机房,LEASE,0
+临大辛庄机房,OFFICE,0
+临大辛庄机房,PRODUCT,{P}
+临大辛庄机房,PUE,{P}/{D}
+临大辛庄机房,TOTAL,{B}+{P}

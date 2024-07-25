@@ -1,0 +1,8 @@
+﻿roomid,vector,formula
+阳闫楼机房,BUSINESS,{T}-{P}
+阳闫楼机房,DEVICE,{D}
+阳闫楼机房,LEASE,0
+阳闫楼机房,OFFICE,0
+阳闫楼机房,PRODUCT,{P}
+阳闫楼机房,PUE,{P}/{D}
+阳闫楼机房,TOTAL,{T}

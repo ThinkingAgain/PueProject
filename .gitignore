@@ -1,7 +1,7 @@
 ### My Roles
 *.gz
 *.rar
-*.csv
+#*.csv
 *.log
 **/bin/*
 **/obj/*
