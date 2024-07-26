@@ -25,7 +25,7 @@ class TestDomain(TestCase):
     def test_gen_hour_current_datas(self):
         """生成小时数据"""
         hp = HourlyProcess()
-        for d in [19, 20, 21, 22]:
+        for d in [24]:
             dt = datetime(2024, 7, d, 0)
             for i in range(24):
                 timestr = (dt + timedelta(hours=i)).strftime("%Y-%m-%d-%H")

@@ -16,7 +16,7 @@ hp = HourlyProcess()
 #     print(f'{d} Completed')
 
 # 07-1 -> 08
-for d in range(18, 19):
+for d in range(22, 24):
     dt = datetime(2024, 7, d, 0)
     for i in range(24):
         timestr = (dt + timedelta(hours=i)).strftime("%Y-%m-%d-%H")
