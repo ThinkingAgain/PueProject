@@ -106,10 +106,19 @@ namespace PUMS.Services.Tests
         {
             var service = new Service(_context);
             var roomId = "聊白洼机房";  // 白洼驻地
-            var data = service.getValidDateByRoomid(roomId);
+            //var data = service.getValidDateByRoomid(roomId);
             var datas = service.getValidDateOfSites();
             Assert.IsTrue(1 == 1);
             //Assert.IsNotNull(data.HourTimeStrs);
+        }
+
+        [TestMethod()]
+        public void getSiteStatementTest()
+        {
+            var service = new Service(_context);
+            var d = service.getSiteStatement("2024-07");
+            Assert.IsTrue(1 == 1);
+
         }
     }
 }

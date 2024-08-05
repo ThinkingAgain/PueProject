@@ -140,6 +140,17 @@ namespace PUMS.Controllers
             return new List<SiteValidDate> { _service.getValidDateBySiteId(siteId) };
         }
 
+        /// <summary>
+        /// 返回"全市用电报表"数据, 以站点为单位
+        /// </summary>
+        /// <param name="timestr">指定时间串</param>
+        /// <returns></returns>
+        [HttpGet("statistics/sitestatement/{timestr}")]
+        public ActionResult<List<Dictionary<string, string>>> GetSiteStatement(string timestr)
+        {
+            return _service.getSiteStatement(timestr);
+        }
+
 
 
 
