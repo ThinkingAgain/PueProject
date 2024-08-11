@@ -3,7 +3,7 @@ import {
     SettingFilled,
     LogoutOutlined,
 } from '@ant-design/icons';
-import { PageContainer, ProCard, ProLayout, MenuDataItem } from '@ant-design/pro-components';
+import { PageContainer, ProLayout, MenuDataItem } from '@ant-design/pro-components';
 import { useState } from 'react';
 import { ProLayoutConfig } from '../proj-config.tsx'
 import {Link, Outlet} from "react-router-dom";
@@ -16,22 +16,22 @@ const Root = () => {
             <ProLayout
                 siderWidth={216}
                 title="能耗综合管理"
-                logo="assets/unicom.jpeg"
+                logo="/assets/unicom.jpeg"
                 bgLayoutImgList={[
                     {
-                        src: 'assets/bglayout1.png',
+                        src: '/assets/bglayout1.png',
                         left: 85,
                         bottom: 100,
                         height: '303px',
                     },
                     {
-                        src: 'assets/bglayout2.jpg',
+                        src: '/assets/bglayout2.jpg',
                         bottom: -68,
                         right: -45,
                         height: '303px',
                     },
                     {
-                        src: 'assets/bglayout3.png',
+                        src: '/assets/bglayout3.png',
                         bottom: 0,
                         left: 0,
                         width: '331px',
@@ -56,14 +56,14 @@ const Root = () => {
                         <LogoutOutlined key="LogoutOutlined"/>,
                     ];
                 }}
-                menuItemRender={(item:MenuDataItem, dom) => {
-                   return (
+                menuItemRender={(item:MenuDataItem, dom, props) => {
+                    return (
                         <div className=""
                              onClick={() => {
                                  setPathname(item.path || '/welcome');
                              }}
                         >
-                            <Link to={item.path}>
+                            <Link to={(props.route?.path?? "/alltheother/energy-statistics") + (item.path ?? "/")}>
                                 {dom}
                             </Link>
 

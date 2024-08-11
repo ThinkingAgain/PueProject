@@ -6,26 +6,27 @@ import {
     ThunderboltTwoTone,
 } from '@ant-design/icons';
 import Root from "./routes/root.tsx";
+import SiteStatement from "./routes/SiteStatement.tsx";
 
 export const BrowserRouterConfig: RouteObject[] = [
     {
-        path: "/",
+        path: "/alltheother/energy-statistics",
         element: <Root />,
         children:[
             {
-                path: '/dashboard',//"table/0/",
+                path: 'dashboard',//"table/0/",
                 element: <>欢迎!</>
             },
             {
-                path: '/site-energy',//"table/0/",
-                element: <>PTable </>
+                path: 'site-energy',//"table/0/",
+                element: <SiteStatement />
             },
             {
-                path: '/energy-alarm',//"table/1/",
+                path: 'energy-alarm',//"table/1/",
                 element: <>PTable1 </>
             },
             {
-                path: '/real-time-energy',//"table/1/",
+                path: 'real-time-energy',//"table/1/",
                 element: <>PTable1 </>
             },
 
@@ -38,37 +39,37 @@ export const BrowserRouterConfig: RouteObject[] = [
 
 export const ProLayoutConfig = {
     route: {
-        path: '/',
+        path: '/alltheother/energy-statistics',
         routes: [
             {
-                path: '/dashboard',
+                path: 'dashboard',
                 name: '主页',
                 icon: <DashboardTwoTone />,
                 component: './Welcome',
             },
             {
-                path: '/site-energy',
+                path: 'site-energy',
                 name: '全市站点用电量',
                 icon: <ThunderboltTwoTone />,
                 access: 'canAdmin',
                 component: './Admin',
             },
             {
-                path: '/energy-alarm',
+                path: 'energy-alarm',
                 name: '办公营业用电预警',
                 icon: <AlertTwoTone />,
                 component: './ListTableList',
 
             },
             {
-                path: '/real-time-energy',
+                path: 'real-time-energy',
                 name: '站点实时用电量',
                 icon: <ThunderboltTwoTone />,
                 access: 'canAdmin',
                 component: './Admin',
             },
             {
-                path: 'https://176.16.1.100',
+                path: '/',
                 name: '全量能耗监测大屏',
                 icon: <ChromeFilled />,
             },
@@ -80,7 +81,7 @@ export const ProLayoutConfig = {
     },
     appList: [
         {
-            icon: "assets/chart.jpeg",
+            icon: "/assets/chart.jpeg",
             title: '全量能耗监测大屏',
             desc: '全量能耗监测与分析的大屏展示',
             url: 'https://176.16.1.100',

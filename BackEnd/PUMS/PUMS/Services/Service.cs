@@ -326,7 +326,9 @@ namespace PUMS.Services
             var fakeTimestr = "2023-01";
             var roomMapEnergyData = _context.siteRooms.Where(s => rooms.Contains(s.RoomID))
                 .Join(_context.EnergyDatas.Where(e => e.CheckMonth == fakeTimestr), // 正式部署时要将fakeTimestr替换为timestr
-                s => s.SiteID, e => e.SiteID, (s, e) => new {SiteRoom=s, EnergyData=e})
+                    s => new {SiteID = s.SiteID, MeterID = s.MeterID}, 
+                    e => new {SiteID = e.SiteID, MeterID = e.MeterID}, 
+                    (s, e) => new {SiteRoom=s, EnergyData=e})
                 .ToDictionary(u => u.SiteRoom.RoomID!, u => u);
             
             // 2. groupby去生成最终数据  
@@ -336,6 +338,8 @@ namespace PUMS.Services
                 var vectorCurrents = g.ToDictionary(c => c.Tag, c => c.Current);
                 var proportions = calculateVectorDicToProportions(vectorCurrents);
                 var energyData = roomMapEnergyData[g.Key].EnergyData;
+
+                var paymentRemoveLease = float.Parse(energyData.PaymentCheck!) * (1 - proportions[Constants.LEASE]);
                 siteStatement.Add(new Dictionary<string, string>
                 {
                     {"timestr", timestr},
@@ -349,9 +353,9 @@ namespace PUMS.Services
                     {"proportion_business", proportions[Constants.BUSINESS].ToString()},
                     {"proportion_lease", proportions[Constants.LEASE].ToString()},
                     {"pue", vectorCurrents[Constants.PUE].ToString()},
-                    {"payment_product", (float.Parse(energyData.PaymentCheck!) * proportions[Constants.PRODUCT]).ToString()},
-                    {"payment_office", (float.Parse(energyData.PaymentCheck!) * proportions[Constants.OFFICE]).ToString()},
-                    {"payment_business", (float.Parse(energyData.PaymentCheck!) * proportions[Constants.BUSINESS]).ToString()},
+                    {"payment_product", (paymentRemoveLease * proportions[Constants.PRODUCT]).ToString()},
+                    {"payment_office", (paymentRemoveLease * proportions[Constants.OFFICE]).ToString()},
+                    {"payment_business", (paymentRemoveLease * proportions[Constants.BUSINESS]).ToString()},
                     {"payment_lease", (float.Parse(energyData.PaymentCheck!) * proportions[Constants.LEASE]).ToString()},
 
                 });
