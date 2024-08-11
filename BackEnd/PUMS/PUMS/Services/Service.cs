@@ -308,6 +308,65 @@ namespace PUMS.Services
         }
 
         /// <summary>
+        /// 返回"全市用电报表"数据
+        /// </summary>
+        /// <param name="timestr">指定的时间串</param>
+        /// <returns></returns>
+        public List<Dictionary<string, string>> getSiteStatement(string timestr)
+        {
+            var siteStatement = new List<Dictionary<string, string>>();
+            if (string.IsNullOrEmpty(timestr)) return siteStatement;
+
+            
+            var currentDatasQuery = _context.CurrentDatas
+                .Where(c => c.TimeStr == timestr && c.DType == Constants.MONTH && c.Category == Constants.VECTOR);
+            // 1. roomid列表
+            var rooms = currentDatasQuery.Select(c => c.RoomID).ToList();
+            // 2. 联表查询site_rooms -> energy_datas
+            var fakeTimestr = "2023-01";
+            var roomMapEnergyData = _context.siteRooms.Where(s => rooms.Contains(s.RoomID))
+                .Join(_context.EnergyDatas.Where(e => e.CheckMonth == fakeTimestr), // 正式部署时要将fakeTimestr替换为timestr
+                    s => new {SiteID = s.SiteID, MeterID = s.MeterID}, 
+                    e => new {SiteID = e.SiteID, MeterID = e.MeterID}, 
+                    (s, e) => new {SiteRoom=s, EnergyData=e})
+                .ToDictionary(u => u.SiteRoom.RoomID!, u => u);
+            
+            // 2. groupby去生成最终数据  
+            
+            foreach (var g in currentDatasQuery.GroupBy(c => c.RoomID))
+            {
+                var vectorCurrents = g.ToDictionary(c => c.Tag, c => c.Current);
+                var proportions = calculateVectorDicToProportions(vectorCurrents);
+                var energyData = roomMapEnergyData[g.Key].EnergyData;
+
+                var paymentRemoveLease = float.Parse(energyData.PaymentCheck!) * (1 - proportions[Constants.LEASE]);
+                siteStatement.Add(new Dictionary<string, string>
+                {
+                    {"timestr", timestr},
+                    {"county",  energyData.County??""},
+                    {"site", energyData.Site! },
+                    {"consumption_check", energyData.ConsumptionCheck! },
+                    {"payment_check", energyData.PaymentCheck! },
+                    {"current_price", energyData.CurrentPrice! },
+                    {"proportion_product", proportions[Constants.PRODUCT].ToString()},
+                    {"proportion_office", proportions[Constants.OFFICE].ToString()},
+                    {"proportion_business", proportions[Constants.BUSINESS].ToString()},
+                    {"proportion_lease", proportions[Constants.LEASE].ToString()},
+                    {"pue", vectorCurrents[Constants.PUE].ToString()},
+                    {"payment_product", (paymentRemoveLease * proportions[Constants.PRODUCT]).ToString()},
+                    {"payment_office", (paymentRemoveLease * proportions[Constants.OFFICE]).ToString()},
+                    {"payment_business", (paymentRemoveLease * proportions[Constants.BUSINESS]).ToString()},
+                    {"payment_lease", (float.Parse(energyData.PaymentCheck!) * proportions[Constants.LEASE]).ToString()},
+
+                });
+                
+            }
+            
+
+            return siteStatement;
+        }
+
+        /// <summary>
         /// 静态方法: 按照约定的规则生成单个站点的ValidDate数据
         /// </summary>
         /// <param name="roomid"></param>

@@ -47,7 +47,7 @@ class TestDomain(TestCase):
     def test_monthlyProcess(self):
         """生成月数据"""
         mp = MonthlyProcess()
-        for timestr in ['2024-06']:
+        for timestr in ['2024-07']:
             todo = Todo(timestr=timestr, dtype=MONTH, status=UNCOMPLETED)
             self.assertEqual(mp.process(todo), COMPLETED)
 

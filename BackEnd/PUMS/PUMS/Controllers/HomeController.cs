@@ -23,6 +23,12 @@ namespace PUMS.Controllers
             return View();
         }
 
+        [Route("alltheother/energy-statistics")]
+        public IActionResult EnergyStatistics()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

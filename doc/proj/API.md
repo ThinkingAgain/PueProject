@@ -59,3 +59,10 @@
    /*指定站点的有效采集数据<SiteValidDate> 默认为全部站点的List<SiteValidDate> */
    /api/datas/collectdatas/sitevaliddates/{siteId}
    ```
+
+8.  报表系统的站点用电情况
+   
+   ```csharp
+   /*各站点的用电数据, 周期由timestr来确定 */
+   /api/datas/statistics/sitestatement/{timestr}
+   ```
