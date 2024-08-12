@@ -7,7 +7,9 @@ from datetime import datetime, timedelta
 # 生成日数据
 dp = DailyProcess()
 # 2024-06-24 -> 30, 07-1 -> 07
-dates = [f'2024-07-{d}' for d in range(22, 24)]
+
+dates = [f'2024-08-0{d}' for d in range(1, 5)]
+
 # for d in range(1, 8):
 #     dates.append(f'2024-07-0{d}')
 
