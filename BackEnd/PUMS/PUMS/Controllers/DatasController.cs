@@ -151,6 +151,17 @@ namespace PUMS.Controllers
             return _service.getSiteStatement(timestr);
         }
 
+        /// <summary>
+        /// 返回"办公营业用电预警表"数据, 日报表
+        /// </summary>
+        /// <param name="timestr">指定日字符串</param>
+        /// <returns></returns>
+        [HttpGet("statistics/nonproductive-alarm/{timestr}")]
+        public ActionResult<List<Dictionary<string, string>>> GetNonproductiveAlarm(string timestr)
+        {
+            return _service.getNonproductiveAlarmData(timestr);
+        }
+
 
 
 

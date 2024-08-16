@@ -367,6 +367,59 @@ namespace PUMS.Services
         }
 
         /// <summary>
+        /// 返回办公营业预警日报的数据
+        /// </summary>
+        /// <param name="timeStr">日字串</param>
+        /// <returns></returns>
+        public List<Dictionary<string, string>> getNonproductiveAlarmData(string timeStr)
+        {
+            var result = new List<Dictionary<string, string>>();
+            // todo 由timestr生成hourList (从当天22点到次日6点)
+            DateTime.TryParseExact(timeStr, _timeStrFormat[Constants.DAY].inputFormat, CultureInfo.InvariantCulture,
+               DateTimeStyles.None, out DateTime ts);
+            var endtime = ts.AddDays(1).AddHours(6);
+            var hourList = new List<string>();
+            for (var t = ts.AddHours(22); t <= endtime; t = t.AddHours(1))
+            {
+                hourList.Add(t.ToString(_timeStrFormat[Constants.HOUR].inputFormat));
+            }
+           
+            List<string> nonproductiveTags = [Constants.OFFICE, Constants.BUSINESS];
+
+            var roomidMapSite = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s.Site);
+            
+            var currentDatasQuery = _context.CurrentDatas
+                .Where(c => c.DType == Constants.HOUR && hourList.Contains(c.TimeStr) && nonproductiveTags.Contains(c.Tag));
+
+            foreach (var g in currentDatasQuery.GroupBy(c => c.RoomID))
+            {
+                var key = g.Key;
+                // [{timestr, sum(office+business)
+                var datas = g.GroupBy(c => c.TimeStr, (timestr, c) => new { timestr = timestr, current = c.Sum(c => c.Current) })
+                    .Where(d => d.current > 1.0)
+                    .ToList();
+                if (datas.Any())
+                {
+                    // append result
+                    var hours = datas.Select(d => d.timestr.Split('-')[^1]).ToList();
+                    var currents = datas.Select(d => d.current).ToList();
+                    var estimate = currents.Aggregate(0.0, (total, next) => total + (next * 220 * 1.52) / (54 * 24));
+                    result.Add(new Dictionary<string, string>
+                    {
+                        {"site", roomidMapSite[g.Key]!},  // todo roomid替换为sitename
+                        {"costHours", String.Join(',', hours)},
+                        {"averageCurrent",  currents.Average().ToString()},
+                        {"maxCurrent", currents.Max().ToString()},
+                        {"estimateConsumption", estimate.ToString()}
+                    });
+                }
+               
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// 静态方法: 按照约定的规则生成单个站点的ValidDate数据
         /// </summary>
         /// <param name="roomid"></param>

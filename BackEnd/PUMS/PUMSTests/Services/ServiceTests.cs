@@ -120,5 +120,13 @@ namespace PUMS.Services.Tests
             Assert.IsTrue(1 == 1);
 
         }
+
+        [TestMethod()]
+        public void getNonproductiveAlarmDataTest()
+        {
+            var service = new Service(_context);
+            var d = service.getNonproductiveAlarmData("2024-08-11");
+            Assert.IsTrue(1 == 1);
+        }
     }
 }

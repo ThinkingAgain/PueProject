@@ -30,6 +30,7 @@ const columns: ProColumns<SiteStatementData>[] = [
         fixed: "left",
         width: 90,
         ellipsis: true,
+        search: false,
 
     },
     {
@@ -38,7 +39,7 @@ const columns: ProColumns<SiteStatementData>[] = [
         fixed: "left",
         width: 150,
         ellipsis: true,
-
+        search: false,
     },
     {
         title: '报账月',
@@ -48,6 +49,7 @@ const columns: ProColumns<SiteStatementData>[] = [
     },
     {
         title: '能源系统信息',
+        search: false,
         children: [
             {
                 title: '电量(度)',
@@ -70,7 +72,8 @@ const columns: ProColumns<SiteStatementData>[] = [
         ]
     },
     {
-        title: '企业综合能耗系统电能分摊比例',
+        title: '企业综合能耗系统电流分摊比例',
+        search: false,
         children: [
             {
                 title: '生产用电',
@@ -100,6 +103,7 @@ const columns: ProColumns<SiteStatementData>[] = [
     },
     {
         title: "电费分摊",
+        search: false,
         children: [
             {
                 title: '生产电费',
@@ -134,6 +138,8 @@ const columns: ProColumns<SiteStatementData>[] = [
     {
         title: 'PUE',
         dataIndex: "pue",
+        fixed: "right",
+        width: 60,
         search:false,
     },
 
@@ -151,7 +157,8 @@ export const SiteStatement = () => {
             scroll={{x: 1300}}
             request={async (params, sort, filter) => {
                 console.log(params, sort, filter);
-                const data = await fetchSiteStatement("/api/datas/statistics/sitestatement/2024-07");
+                const {timestr} = params;
+                const data = await fetchSiteStatement(`/api/datas/statistics/sitestatement/${timestr}`);
                 //console.log(data[4])
                 data.forEach((item) => {
                     item['consumption_check'] = Math.round(item['consumption_check']);

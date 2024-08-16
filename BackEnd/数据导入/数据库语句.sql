@@ -111,6 +111,11 @@ CREATE TABLE energy_datas
 表增加自增主键  
 alter table pue.energy_datas add column id int auto_increment primary key;
 
+表去掉主键
+alter table energy_datas drop primary key;
+表删除字段
+alter table energy_datas drop column id;
+
 CSV倒入表：
 LOAD DATA INFILE '/var/lib/mysql-files/energy_datas_init_noid.csv'
 INTO TABLE energy_datas
