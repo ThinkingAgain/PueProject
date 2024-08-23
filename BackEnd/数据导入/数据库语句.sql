@@ -162,6 +162,8 @@ CREATE TABLE site_rooms
 		meter_id varchar(60) not null,
         primary key (site_id,roomid)
 	);
+/* site_rooms 增加区县字段 */
+alter table pue.site_rooms add column county varchar(200);
 	
 
 /* collector  采集元数据定义: 采集标签与采集点的对应关系 tag -> collectpoint  */

@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import Root from "./routes/root.tsx";
 import SiteStatement from "./routes/SiteStatement.tsx";
+import NonproductiveAlarm from "./routes/NonproductiveAlarm.tsx";
 
 export const BrowserRouterConfig: RouteObject[] = [
     {
@@ -23,7 +24,7 @@ export const BrowserRouterConfig: RouteObject[] = [
             },
             {
                 path: 'energy-alarm',//"table/1/",
-                element: <>PTable1 </>
+                element: <NonproductiveAlarm />
             },
             {
                 path: 'real-time-energy',//"table/1/",

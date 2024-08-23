@@ -3,6 +3,7 @@
     public class CollectData
     {
         public string SiteID { get; set; }
+        public string? County { get; set; }
         public string RoomID { get; set; }
         public string Site { get; set; }
         public string TimeStr { get; set; }

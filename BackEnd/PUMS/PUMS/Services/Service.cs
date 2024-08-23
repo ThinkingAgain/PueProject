@@ -124,6 +124,41 @@ namespace PUMS.Services
 
         }
 
+        /// <summary>
+        /// 获取指定时间类型, 指定时间点的所有CollectData数据
+        /// </summary>
+        /// <param name="dType"></param>
+        /// <param name="timeStr"></param>
+        /// <returns></returns>
+        public List<CollectData> getCollectDatasByTimestr(string dType, string timeStr)
+        {
+            var datas = new List<CollectData>();
+            var roomidMap = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s);
+            var currentDatasQuery = _context.CurrentDatas
+                .Where(c => c.DType == dType
+                            && c.TimeStr == timeStr && c.Category == Constants.VECTOR);
+                
+            foreach (var g in currentDatasQuery.GroupBy(c => c.RoomID))
+            {
+                var vectorCurrents = g.ToDictionary(c => c.Tag, c => c.Current);
+                var proportions = calculateVectorDicToProportions(vectorCurrents);
+                datas.Add(
+                    new CollectData
+                    {
+                        SiteID = roomidMap[g.Key].SiteID!,
+                        County = roomidMap[g.Key].County!,
+                        RoomID = g.Key,
+                        Site = roomidMap[g.Key].Site!,
+                        TimeStr = timeStr,
+                        TagCurrents = vectorCurrents,
+                        Proportions = proportions
+                    }
+                    );
+            }
+
+            return datas;
+        }
+
 
         /// <summary>
         /// 获取某站点某天的VectorSeries数据
@@ -386,7 +421,7 @@ namespace PUMS.Services
            
             List<string> nonproductiveTags = [Constants.OFFICE, Constants.BUSINESS];
 
-            var roomidMapSite = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s.Site);
+            var roomidMapSite = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s);
             
             var currentDatasQuery = _context.CurrentDatas
                 .Where(c => c.DType == Constants.HOUR && hourList.Contains(c.TimeStr) && nonproductiveTags.Contains(c.Tag));
@@ -406,8 +441,10 @@ namespace PUMS.Services
                     var estimate = currents.Aggregate(0.0, (total, next) => total + (next * 220 * 1.52) / (54 * 24));
                     result.Add(new Dictionary<string, string>
                     {
-                        {"site", roomidMapSite[g.Key]!},  // todo roomid替换为sitename
-                        {"costHours", String.Join(',', hours)},
+                        {nameof(SiteRoom.County), roomidMapSite[g.Key].County! },
+                        {"site", roomidMapSite[g.Key].Site!},  // todo roomid替换为sitename
+                        {"timestr", timeStr},
+                        {"costHours", String.Join('|', hours)},
                         {"averageCurrent",  currents.Average().ToString()},
                         {"maxCurrent", currents.Max().ToString()},
                         {"estimateConsumption", estimate.ToString()}
@@ -418,6 +455,7 @@ namespace PUMS.Services
 
             return result;
         }
+        
 
         /// <summary>
         /// 静态方法: 按照约定的规则生成单个站点的ValidDate数据

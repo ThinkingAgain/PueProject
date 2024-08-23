@@ -16,7 +16,7 @@ const Root = () => {
             <ProLayout
                 siderWidth={216}
                 title="能耗综合管理"
-                logo="/assets/unicom.jpeg"
+                logo="/assets/cliob.jpeg"
                 bgLayoutImgList={[
                     {
                         src: '/assets/bglayout1.png',

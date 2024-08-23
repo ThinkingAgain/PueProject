@@ -73,3 +73,12 @@
    /* 办公营业夜间用电的预警数据, timestr指定具体日期 */
    /api/datas/statistics/nonproductive-alarm/{timestr}
    ```
+
+10. 报表系统的实时报表数据
+    
+    ```csharp
+    /*实时时刻的各站点CollectData采集数据*/
+    /api/datas/statistics/sometime
+    /*指定时间类型及时刻的各站点CollectData采集数据*/
+    /api/datas/statistics/sometime/{dtype}/{timestr}
+    ```

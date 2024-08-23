@@ -71,7 +71,7 @@ namespace PUMS.Services.Tests
             var timestr = DateTime.Today.ToString("yyyy-MM-dd");
             var yestoday = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
 
-
+            var t = DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd-HH");
 
 
             Console.WriteLine("hello");
@@ -126,6 +126,15 @@ namespace PUMS.Services.Tests
         {
             var service = new Service(_context);
             var d = service.getNonproductiveAlarmData("2024-08-11");
+            Assert.IsTrue(1 == 1);
+        }
+
+        [TestMethod()]
+        public void getCollectDatasByTimestrAsyncTest()
+        {
+            
+            var service = new Service(_context);
+            var d = service.getCollectDatasByTimestr(Constants.HOUR, "2024-08-20-10");
             Assert.IsTrue(1 == 1);
         }
     }
