@@ -61,7 +61,7 @@ const columns: ProColumns<NonproductiveAlarmData>[] = [
 
 
 
-export const SiteStatement = () => {
+export const NonproductiveAlarm = () => {
     const [data, setData] = useState<NonproductiveAlarmData[] | null>(null);
 
     const onExportExcel = async () => {
@@ -108,4 +108,4 @@ export const SiteStatement = () => {
     )
 }
 
-export default  SiteStatement
+export default  NonproductiveAlarm

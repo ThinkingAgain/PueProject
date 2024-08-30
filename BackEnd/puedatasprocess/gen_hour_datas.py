@@ -26,7 +26,7 @@ hp = HourlyProcess()
 #     print(f'{d} Completed')
 
 # 08-6 -> 13
-for d in range(12, 21):
+for d in range(20, 27):
     dt = datetime(2024, 8, d, 0)
 
     for i in range(24):

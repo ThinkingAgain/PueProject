@@ -8,6 +8,7 @@ import {
 import Root from "./routes/root.tsx";
 import SiteStatement from "./routes/SiteStatement.tsx";
 import NonproductiveAlarm from "./routes/NonproductiveAlarm.tsx";
+import RealTimeStatement from "./routes/RealTimeStatement.tsx";
 
 export const BrowserRouterConfig: RouteObject[] = [
     {
@@ -28,7 +29,7 @@ export const BrowserRouterConfig: RouteObject[] = [
             },
             {
                 path: 'real-time-energy',//"table/1/",
-                element: <>PTable1 </>
+                element: <RealTimeStatement />
             },
 
         ]

@@ -358,14 +358,21 @@ namespace PUMS.Services
             // 1. roomid列表
             var rooms = currentDatasQuery.Select(c => c.RoomID).ToList();
             // 2. 联表查询site_rooms -> energy_datas
-            var fakeTimestr = "2023-01";
+            //var fakeTimestr = "2023-01";
+            // 能源系统中的报账月应向后错一个月
+            DateTime.TryParseExact(timestr, _timeStrFormat[Constants.MONTH].inputFormat, CultureInfo.InvariantCulture,
+               DateTimeStyles.None, out DateTime ts);
+            var checkMonth = ts.AddMonths(1).ToString(_timeStrFormat[Constants.MONTH].inputFormat);
+            
+
             var roomMapEnergyData = _context.siteRooms.Where(s => rooms.Contains(s.RoomID))
-                .Join(_context.EnergyDatas.Where(e => e.CheckMonth == fakeTimestr), // 正式部署时要将fakeTimestr替换为timestr
+                .Join(_context.EnergyDatas.Where(e => e.CheckMonth == checkMonth), // 正式部署时要将fakeTimestr替换为timestr
                     s => new {SiteID = s.SiteID, MeterID = s.MeterID}, 
                     e => new {SiteID = e.SiteID, MeterID = e.MeterID}, 
                     (s, e) => new {SiteRoom=s, EnergyData=e})
                 .ToDictionary(u => u.SiteRoom.RoomID!, u => u);
-            
+
+            if (roomMapEnergyData.Count == 0) return siteStatement;
             // 2. groupby去生成最终数据  
             
             foreach (var g in currentDatasQuery.GroupBy(c => c.RoomID))

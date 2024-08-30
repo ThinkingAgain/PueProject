@@ -1,5 +1,8 @@
 import {ProColumns, ProTable} from "@ant-design/pro-components";
 import {SiteStatementData} from "../model/ApiData.ts";
+import {Button} from "antd";
+import {exportTwoLevelHeaderExcel} from "../service/tools.tsx";
+import {useState} from "react";
 
  async function  fetchSiteStatement(url: string): Promise<SiteStatementData[]> {
     let data: SiteStatementData[];
@@ -78,25 +81,25 @@ const columns: ProColumns<SiteStatementData>[] = [
             {
                 title: '生产用电',
                 dataIndex: "proportion_product",
-                valueType: (_) => ({type: "percent", precision: 0}),
+                valueType: () => ({type: "percent", precision: 0}),
                 search: false,
             },
             {
                 title: '办公用电',
                 dataIndex: "proportion_office",
-                valueType: (_) => ({type: "percent", precision: 0}),
+                valueType: () => ({type: "percent", precision: 0}),
                 search: false,
             },
             {
                 title: '营业用电',
                 dataIndex: "proportion_business",
-                valueType: (_) => ({type: "percent", precision: 0}),
+                valueType: () => ({type: "percent", precision: 0}),
                 search: false,
             },
             {
                 title: '外租用电',
                 dataIndex: "proportion_lease",
-                valueType: (_) => ({type: "percent", precision: 0}),
+                valueType: () => ({type: "percent", precision: 0}),
                 search: false,
             },
         ]
@@ -149,18 +152,20 @@ const columns: ProColumns<SiteStatementData>[] = [
 
 
 export const SiteStatement = () => {
-    return (
+    const [data, setData] = useState<SiteStatementData[]>([]);
+     return (
         <ProTable<SiteStatementData>
             columns={columns}
             cardBordered
             bordered
             scroll={{x: 1300}}
+            pagination={{ pageSize: 10}}
             request={async (params, sort, filter) => {
                 console.log(params, sort, filter);
                 const {timestr} = params;
-                const data = await fetchSiteStatement(`/api/datas/statistics/sitestatement/${timestr}`);
+                const apiData = await fetchSiteStatement(`/api/datas/statistics/sitestatement/${timestr}`);
                 //console.log(data[4])
-                data.forEach((item) => {
+                apiData.forEach((item) => {
                     item['consumption_check'] = Math.round(item['consumption_check']);
                     item['proportion_product'] *= 100;
                     item['proportion_office'] *= 100;
@@ -168,12 +173,20 @@ export const SiteStatement = () => {
                     item['proportion_lease'] *= 100;
                     item['pue'] = Math.round(item['pue'] * 100) / 100
                 })
+                setData(apiData);
                 //console.log(data[4])
                 return {
-                    data: data,
+                    data: apiData,
                     success: true
                 }
             }}
+            toolBarRender={() => [
+                <Button type="primary" disabled={!data || data.length === 0}
+                        key="out"
+                        onClick={() => exportTwoLevelHeaderExcel<SiteStatementData>(columns, data, "全市站点用电量.xlsx")}>
+                    导出数据
+                </Button>
+            ]}
 
         />
     )

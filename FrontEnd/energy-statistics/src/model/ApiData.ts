@@ -27,3 +27,28 @@ export type NonproductiveAlarmData = {
     maxCurrent: number,
     estimateConsumption: number,    // 估算用电度数
 }
+
+// 定义<实时报表>的数据结构
+export type CollectData = {
+    siteID: string,
+    county: string,
+    roomID: string,
+    timeStr: string,
+    tagCurrents: {
+        BUSINESS: number,
+        DEVICE: number,
+        LEASE: number,
+        OFFICE: number,
+        PRODUCT: number,
+        PUE: number,
+        TOTAL: number,
+        [proName: string]: number,
+    },
+    proportions: {
+        PRODUCT: number,
+        OFFICE: number,
+        BUSINESS: number,
+        LEASE: number,
+        [proName: string]: number,
+    },
+}
