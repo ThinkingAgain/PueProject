@@ -15,9 +15,20 @@ hp = HourlyProcess()
 #         hp.process(todo)
 #     print(f'{d} Completed')
 
-# 07-1 -> 08
-for d in range(1, 6):
+# 07-1 -> 31
+# for d in range(1, 32):
+#     dt = datetime(2024, 7, d, 0)
+#
+#     for i in range(24):
+#         timestr = (dt + timedelta(hours=i)).strftime("%Y-%m-%d-%H")
+#         todo = Todo(timestr=timestr, dtype=HOUR, status=UNCOMPLETED)
+#         hp.process(todo)
+#     print(f'{d} Completed')
+
+# 08-6 -> 13
+for d in range(20, 27):
     dt = datetime(2024, 8, d, 0)
+
     for i in range(24):
         timestr = (dt + timedelta(hours=i)).strftime("%Y-%m-%d-%H")
         todo = Todo(timestr=timestr, dtype=HOUR, status=UNCOMPLETED)

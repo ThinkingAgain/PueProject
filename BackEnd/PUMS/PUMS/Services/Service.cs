@@ -124,6 +124,41 @@ namespace PUMS.Services
 
         }
 
+        /// <summary>
+        /// 获取指定时间类型, 指定时间点的所有CollectData数据
+        /// </summary>
+        /// <param name="dType"></param>
+        /// <param name="timeStr"></param>
+        /// <returns></returns>
+        public List<CollectData> getCollectDatasByTimestr(string dType, string timeStr)
+        {
+            var datas = new List<CollectData>();
+            var roomidMap = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s);
+            var currentDatasQuery = _context.CurrentDatas
+                .Where(c => c.DType == dType
+                            && c.TimeStr == timeStr && c.Category == Constants.VECTOR);
+                
+            foreach (var g in currentDatasQuery.GroupBy(c => c.RoomID))
+            {
+                var vectorCurrents = g.ToDictionary(c => c.Tag, c => c.Current);
+                var proportions = calculateVectorDicToProportions(vectorCurrents);
+                datas.Add(
+                    new CollectData
+                    {
+                        SiteID = roomidMap[g.Key].SiteID!,
+                        County = roomidMap[g.Key].County!,
+                        RoomID = g.Key,
+                        Site = roomidMap[g.Key].Site!,
+                        TimeStr = timeStr,
+                        TagCurrents = vectorCurrents,
+                        Proportions = proportions
+                    }
+                    );
+            }
+
+            return datas;
+        }
+
 
         /// <summary>
         /// 获取某站点某天的VectorSeries数据
@@ -323,14 +358,21 @@ namespace PUMS.Services
             // 1. roomid列表
             var rooms = currentDatasQuery.Select(c => c.RoomID).ToList();
             // 2. 联表查询site_rooms -> energy_datas
-            var fakeTimestr = "2023-01";
+            //var fakeTimestr = "2023-01";
+            // 能源系统中的报账月应向后错一个月
+            DateTime.TryParseExact(timestr, _timeStrFormat[Constants.MONTH].inputFormat, CultureInfo.InvariantCulture,
+               DateTimeStyles.None, out DateTime ts);
+            var checkMonth = ts.AddMonths(1).ToString(_timeStrFormat[Constants.MONTH].inputFormat);
+            
+
             var roomMapEnergyData = _context.siteRooms.Where(s => rooms.Contains(s.RoomID))
-                .Join(_context.EnergyDatas.Where(e => e.CheckMonth == fakeTimestr), // 正式部署时要将fakeTimestr替换为timestr
+                .Join(_context.EnergyDatas.Where(e => e.CheckMonth == checkMonth), // 正式部署时要将fakeTimestr替换为timestr
                     s => new {SiteID = s.SiteID, MeterID = s.MeterID}, 
                     e => new {SiteID = e.SiteID, MeterID = e.MeterID}, 
                     (s, e) => new {SiteRoom=s, EnergyData=e})
                 .ToDictionary(u => u.SiteRoom.RoomID!, u => u);
-            
+
+            if (roomMapEnergyData.Count == 0) return siteStatement;
             // 2. groupby去生成最终数据  
             
             foreach (var g in currentDatasQuery.GroupBy(c => c.RoomID))
@@ -365,6 +407,62 @@ namespace PUMS.Services
 
             return siteStatement;
         }
+
+        /// <summary>
+        /// 返回办公营业预警日报的数据
+        /// </summary>
+        /// <param name="timeStr">日字串</param>
+        /// <returns></returns>
+        public List<Dictionary<string, string>> getNonproductiveAlarmData(string timeStr)
+        {
+            var result = new List<Dictionary<string, string>>();
+            // todo 由timestr生成hourList (从当天22点到次日6点)
+            DateTime.TryParseExact(timeStr, _timeStrFormat[Constants.DAY].inputFormat, CultureInfo.InvariantCulture,
+               DateTimeStyles.None, out DateTime ts);
+            var endtime = ts.AddDays(1).AddHours(6);
+            var hourList = new List<string>();
+            for (var t = ts.AddHours(22); t <= endtime; t = t.AddHours(1))
+            {
+                hourList.Add(t.ToString(_timeStrFormat[Constants.HOUR].inputFormat));
+            }
+           
+            List<string> nonproductiveTags = [Constants.OFFICE, Constants.BUSINESS];
+
+            var roomidMapSite = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s);
+            
+            var currentDatasQuery = _context.CurrentDatas
+                .Where(c => c.DType == Constants.HOUR && hourList.Contains(c.TimeStr) && nonproductiveTags.Contains(c.Tag));
+
+            foreach (var g in currentDatasQuery.GroupBy(c => c.RoomID))
+            {
+                var key = g.Key;
+                // [{timestr, sum(office+business)
+                var datas = g.GroupBy(c => c.TimeStr, (timestr, c) => new { timestr = timestr, current = c.Sum(c => c.Current) })
+                    .Where(d => d.current > 1.0)
+                    .ToList();
+                if (datas.Any())
+                {
+                    // append result
+                    var hours = datas.Select(d => d.timestr.Split('-')[^1]).ToList();
+                    var currents = datas.Select(d => d.current).ToList();
+                    var estimate = currents.Aggregate(0.0, (total, next) => total + (next * 220 * 1.52) / (54 * 24));
+                    result.Add(new Dictionary<string, string>
+                    {
+                        {nameof(SiteRoom.County), roomidMapSite[g.Key].County! },
+                        {"site", roomidMapSite[g.Key].Site!},  // todo roomid替换为sitename
+                        {"timestr", timeStr},
+                        {"costHours", String.Join('|', hours)},
+                        {"averageCurrent",  currents.Average().ToString()},
+                        {"maxCurrent", currents.Max().ToString()},
+                        {"estimateConsumption", estimate.ToString()}
+                    });
+                }
+               
+            }
+
+            return result;
+        }
+        
 
         /// <summary>
         /// 静态方法: 按照约定的规则生成单个站点的ValidDate数据

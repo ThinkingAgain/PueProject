@@ -23,5 +23,17 @@ namespace PUMS.Models
         [Display(Name = "电表ID")]
         [Column("meter_id")]
         public string? MeterID { get; set; }
+
+        [Display(Name = "区县")]
+        [Column("county")]
+        public string? County { get; set; }
     }
+
+    
+   /* public class SiteInfoMap
+    {
+        public Dictionary<string, SiteRoom> SiteID { get; set; } = new Dictionary<string, SiteRoom>();
+        public Dictionary<string, SiteRoom> Site { get; set; } = new Dictionary<string, SiteRoom>();
+        public Dictionary<string, SiteRoom> RoomID { get; set; } = new Dictionary<string, SiteRoom>();
+    }*/
 }

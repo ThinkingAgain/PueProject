@@ -60,9 +60,25 @@
    /api/datas/collectdatas/sitevaliddates/{siteId}
    ```
 
-8.  报表系统的站点用电情况
+8. 报表系统的站点用电情况
    
    ```csharp
    /*各站点的用电数据, 周期由timestr来确定 */
    /api/datas/statistics/sitestatement/{timestr}
    ```
+
+9. 报表系统的办公营业用电预警日报的数据
+   
+   ```csharp
+   /* 办公营业夜间用电的预警数据, timestr指定具体日期 */
+   /api/datas/statistics/nonproductive-alarm/{timestr}
+   ```
+
+10. 报表系统的实时报表数据
+    
+    ```csharp
+    /*实时时刻的各站点CollectData采集数据*/
+    /api/datas/statistics/sometime
+    /*指定时间类型及时刻的各站点CollectData采集数据*/
+    /api/datas/statistics/sometime/{dtype}/{timestr}
+    ```

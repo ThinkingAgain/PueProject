@@ -111,6 +111,11 @@ CREATE TABLE energy_datas
 表增加自增主键  
 alter table pue.energy_datas add column id int auto_increment primary key;
 
+表去掉主键
+alter table energy_datas drop primary key;
+表删除字段
+alter table energy_datas drop column id;
+
 CSV倒入表：
 LOAD DATA INFILE '/var/lib/mysql-files/energy_datas_init_noid.csv'
 INTO TABLE energy_datas
@@ -157,6 +162,8 @@ CREATE TABLE site_rooms
 		meter_id varchar(60) not null,
         primary key (site_id,roomid)
 	);
+/* site_rooms 增加区县字段 */
+alter table pue.site_rooms add column county varchar(200);
 	
 
 /* collector  采集元数据定义: 采集标签与采集点的对应关系 tag -> collectpoint  */

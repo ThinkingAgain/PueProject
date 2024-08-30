@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using PUMS.Data;
 using PUMS.Models;
 using PUMS.Services;
+using System.Security.Policy;
 
 namespace PUMS.Controllers
 {
@@ -150,6 +151,30 @@ namespace PUMS.Controllers
         {
             return _service.getSiteStatement(timestr);
         }
+
+        /// <summary>
+        /// 返回"办公营业用电预警表"数据, 日报表
+        /// </summary>
+        /// <param name="timestr">指定日字符串</param>
+        /// <returns></returns>
+        [HttpGet("statistics/nonproductive-alarm/{timestr}")]
+        public ActionResult<List<Dictionary<string, string>>> GetNonproductiveAlarm(string timestr)
+        {
+            return _service.getNonproductiveAlarmData(timestr);
+        }
+
+        /// <summary>
+        /// 返回"实时报表"数据
+        /// </summary>
+        /// <param name="timestr">指定时刻字串</param>
+        /// <returns></returns>
+        [HttpGet("statistics/sometime")]
+        [HttpGet("statistics/sometime/{dtype}/{timestr}")]
+        public ActionResult<List<CollectData>> GetRealTableDatas(string? dtype, 
+            string? timestr) =>
+         _service.getCollectDatasByTimestr(dtype ?? Constants.HOUR, 
+                timestr ?? DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd-HH"));
+        
 
 
 
