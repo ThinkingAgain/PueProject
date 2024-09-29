@@ -17,6 +17,8 @@ const Root = () => {
                 siderWidth={216}
                 title="能耗综合管理"
                 logo="/assets/cliob.jpeg"
+                /*defaultCollapsed={true}
+                breakpoint={false}*/
                 bgLayoutImgList={[
                     {
                         src: '/assets/bglayout1.png',
@@ -74,7 +76,7 @@ const Root = () => {
 
 
             >
-                <PageContainer>
+                <PageContainer >
                     {/*<ProCard className="bg-gray-100"
                         style={{
                             height: '100vh',

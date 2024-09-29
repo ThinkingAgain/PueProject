@@ -18,12 +18,12 @@ dates = []
 # for d in range(10, 32):
 #     dates.append(f'2024-07-{d}')
 #
-# # 2024-08-01 -> 09
+# # 2024-09-01 -> 09
 # for d in range(1, 10):
-#     dates.append(f'2024-08-0{d}')
-# 2024-08-10 -> 12
-for d in range(20, 26):
-    dates.append(f'2024-08-{d}')
+#     dates.append(f'2024-09-0{d}')
+# # 2024-09-10 -> 11
+for d in range(13, 25):
+    dates.append(f'2024-09-{d}')
 
 print(dates)
 

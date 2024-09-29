@@ -9,6 +9,7 @@ import Root from "./routes/root.tsx";
 import SiteStatement from "./routes/SiteStatement.tsx";
 import NonproductiveAlarm from "./routes/NonproductiveAlarm.tsx";
 import RealTimeStatement from "./routes/RealTimeStatement.tsx";
+import CoreSite from "./routes/CoreSite.tsx";
 
 export const BrowserRouterConfig: RouteObject[] = [
     {
@@ -18,6 +19,10 @@ export const BrowserRouterConfig: RouteObject[] = [
             {
                 path: 'dashboard',//"table/0/",
                 element: <>欢迎!</>
+            },
+            {
+                path: 'core-site',//"table/0/",
+                element: <CoreSite />
             },
             {
                 path: 'site-energy',//"table/0/",
@@ -48,6 +53,13 @@ export const ProLayoutConfig = {
                 name: '主页',
                 icon: <DashboardTwoTone />,
                 component: './Welcome',
+            },
+            {
+                path: 'core-site',
+                name: '842',
+                icon: <ThunderboltTwoTone />,
+                access: 'canAdmin',
+                component: './Admin',
             },
             {
                 path: 'site-energy',
