@@ -1,11 +1,11 @@
-import {NonproductiveAlarmData} from "../model/ApiData.ts";
+import {Level2SiteRealTimeData} from "../model/ApiData.ts";
 import {ProColumns, ProTable} from "@ant-design/pro-components";
 import {fetchData} from "../service/fetch.tsx";
 import {Button} from 'antd'
-import {exportSimpleExcel} from "../service/tools.tsx";
+import {convertDateTimeToTimeStr, convertTimeStrToDateTime, exportSimpleExcel} from "../service/tools.tsx";
 import {useState} from "react";
 
-const columns: ProColumns<NonproductiveAlarmData>[] = [
+const columns: ProColumns<Level2SiteRealTimeData>[] = [
     {
         dataIndex: 'index',
         valueType: 'indexBorder',
@@ -27,42 +27,37 @@ const columns: ProColumns<NonproductiveAlarmData>[] = [
         search: false,
     },
     {
-        title: '日期',
-        dataIndex: "timestr",
-        valueType: "date",
+        title: '一级类别',
+        dataIndex: "category",
+        ellipsis: true,
+        search: false,
+    },
+    {
+        title: '二级用电点',
+        dataIndex: "l2Site",
+        ellipsis: true,
+        search: false,
+    },
+    {
+        title: '时间',
+        dataIndex: "timeStr",
+        valueType: "dateTime",
+        width: 160,
 
     },
     {
-        title: '夜间用电时段(电流>1A)',
-        dataIndex: "costHours",
+        title: '电流信息(A)',
+        dataIndex: "current",
         search: false,
-        width: 200,
 
     },
-    {
-        title: '夜间平均电流(A)',
-        dataIndex: 'averageCurrent',
-        //valueType: 'money',
-        search: false,
-    },
-    {
-        title: '夜间最大电流(A)',
-        dataIndex: "maxCurrent",
-        //valueType: 'money',
-        search: false,
-    },
-    {
-        title: '理论用电量(度)',
-        dataIndex: "estimateConsumption",
-        //valueType: (_) => ({type: "percent", precision: 0}),
-        search: false,
-    },
+
 ]
 
 
 
-export const NonproductiveAlarm = () => {
-    const [data, setData] = useState<NonproductiveAlarmData[] | null>(null);
+export const Level2SiteRealTime = () => {
+    const [data, setData] = useState<Level2SiteRealTimeData[] | null>(null);
 
     const onExportExcel = async () => {
         const cols :ExcelHeader[] = columns.map((col) => {
@@ -73,25 +68,26 @@ export const NonproductiveAlarm = () => {
             }
         })
         // 获取数据日期串
-        const dateStr = (data === null ? "" : data[0]?.timestr) ?? ""
-        await exportSimpleExcel<NonproductiveAlarmData>(cols, data as NonproductiveAlarmData[], `局站非生产夜间用电预警表${dateStr}.xlsx`);
+        const dateStr = (data === null ? "" : data[0]?.timeStr) ?? ""
+        await exportSimpleExcel<Level2SiteRealTimeData>(cols, data as Level2SiteRealTimeData[], `二级用电点实时报表${dateStr}.xlsx`);
     }
     console.log("data", data)
     return (
-        <ProTable<NonproductiveAlarmData>
+        <ProTable<Level2SiteRealTimeData>
             columns={columns}
             cardBordered
             //bordered
             //scroll={{x: 1300}}
             request={async (params, sort, filter) => {
                 console.log(params, sort, filter);
-                const {timestr} = params;
-                const apiData = await fetchData<NonproductiveAlarmData[]>(`/api/datas/statistics/nonproductive-alarm/${timestr}`);
+                const {timeStr} = params;
+                const tailParam = timeStr ? `hour/${convertDateTimeToTimeStr(timeStr)}` : "";
+                const apiData = await fetchData<Level2SiteRealTimeData[]>(
+                    `/api/datas/statistics/l2site-sometime/${tailParam}`);
                 //console.log(data[4])
                 apiData.forEach((item) => {
-                    item.averageCurrent = Math.round(item.averageCurrent * 10) / 10;
-                    item.maxCurrent = Math.round(item.maxCurrent * 10) / 10;
-                    item.estimateConsumption = Math.round(item.estimateConsumption * 10) / 10;
+                    item.timeStr = convertTimeStrToDateTime(item.timeStr);
+                    item.current = Math.round(item.current * 10) / 10;
                 })
                 setData(apiData);
                 //console.log(data[4])
@@ -108,4 +104,4 @@ export const NonproductiveAlarm = () => {
     )
 }
 
-export default  NonproductiveAlarm
+export default  Level2SiteRealTime

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using PUMS.Data;
@@ -157,6 +158,43 @@ namespace PUMS.Services
             }
 
             return datas;
+        }
+
+        /// <summary>
+        /// 获取指定时间类型, 指定时间点的所有二级用电点的数据
+        /// </summary>
+        /// <param name="dType"></param>
+        /// <param name="timeStr"></param>
+        /// <returns></returns>
+        public List<Dictionary<string, string>> getLevel2SiteDatasByTimestr(string dType, string timeStr)
+        {
+            var roomidMapSite = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s);
+
+            // 二级用电点的tags
+            List<string> level2SiteTags = _context.CurrentDatas
+                .Where(c => c.DType == dType
+                            && c.TimeStr == timeStr && c.Category == Constants.VECTOR)
+                .Select(c => c.Tag)
+                .Distinct()
+                .ToList()
+                .FindAll(t => t.Split("-").Length == 2);
+
+            var currentDatas = _context.CurrentDatas
+                .Where(c => c.DType == dType && c.TimeStr == timeStr 
+                        && c.Category == Constants.VECTOR && level2SiteTags.Contains(c.Tag))
+                .ToList();
+
+            return currentDatas.Select(c => new Dictionary<string, string>
+                    {
+                        {nameof(SiteRoom.County), roomidMapSite[c.RoomID].County! },
+                        {"site", roomidMapSite[c.RoomID].Site!},  // todo roomid替换为sitename
+                        {"category", c.Tag.Split('-')[0] },
+                        {"l2Site",  c.Tag.Split('-')[^1]},
+                        {"timeStr", timeStr},
+                        {"current", c.Current.ToString()},
+                    })
+                .OrderBy(d => d["category"])
+                .ToList();            
         }
 
 
@@ -416,7 +454,8 @@ namespace PUMS.Services
         public List<Dictionary<string, string>> getNonproductiveAlarmData(string timeStr)
         {
             var result = new List<Dictionary<string, string>>();
-            // todo 由timestr生成hourList (从当天22点到次日6点)
+
+            // 由timestr生成hourList (从当天22点到次日6点)
             DateTime.TryParseExact(timeStr, _timeStrFormat[Constants.DAY].inputFormat, CultureInfo.InvariantCulture,
                DateTimeStyles.None, out DateTime ts);
             var endtime = ts.AddDays(1).AddHours(6);
@@ -462,7 +501,76 @@ namespace PUMS.Services
 
             return result;
         }
-        
+
+        /// <summary>
+        /// 返回含有二级用电点的办公营业夜间用电预警日报的数据
+        /// </summary>
+        /// <param name="timeStr">日字串</param>
+        /// <returns></returns>
+        public List<Dictionary<string, string>> getLevel2SiteAlarmData(string timeStr)
+        {
+            var result = new List<Dictionary<string, string>>();
+            
+            // 由timestr生成hourList (从当天22点到次日6点)
+            DateTime.TryParseExact(timeStr, _timeStrFormat[Constants.DAY].inputFormat, CultureInfo.InvariantCulture,
+               DateTimeStyles.None, out DateTime ts);
+            var endtime = ts.AddDays(1).AddHours(6);
+            var hourList = new List<string>();
+            for (var t = ts.AddHours(22); t <= endtime; t = t.AddHours(1))
+            {
+                hourList.Add(t.ToString(_timeStrFormat[Constants.HOUR].inputFormat));
+            }
+
+            // 二级用电点的tags
+            List<string> level2SiteTags = _context.CurrentDatas
+                .Where(c => c.DType == Constants.HOUR && hourList.Contains(c.TimeStr) &&
+                            c.Category == Constants.VECTOR)
+                .Select(c => c.Tag)
+                .Distinct()
+                .ToList()
+                .FindAll(t => t.Split("-").Length == 2);
+
+            var roomidMapSite = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s);
+
+            var currentDatasQuery = _context.CurrentDatas
+                .Where(c => c.DType == Constants.HOUR && hourList.Contains(c.TimeStr) && 
+                            c.Category == Constants.VECTOR && level2SiteTags.Contains(c.Tag));
+
+            foreach (var g in currentDatasQuery.GroupBy(c => new {RoomID=c.RoomID, Tag=c.Tag}))
+            {
+                var RoomID = g.Key.RoomID;
+                var Tag = g.Key.Tag;
+                // [{timestr, sum(office+business)
+                var datas = g.GroupBy(c => c.TimeStr, (timestr, c) => new { timestr = timestr, current = c.Sum(c => c.Current) })
+                    .Where(d => d.current > 1.0)
+                    .OrderBy(d => d.timestr)
+                    .ToList();
+
+               if (datas.Any())
+                {
+                    // append result
+                    var hours = datas.Select(d => d.timestr.Split('-')[^1]).ToList();
+                    var currents = datas.Select(d => d.current).ToList();
+                    var estimate = currents.Aggregate(0.0, (total, next) => total + (next * 220 * 1.52) / (54 * 24));
+                    result.Add(new Dictionary<string, string>
+                    {
+                        {nameof(SiteRoom.County), roomidMapSite[RoomID].County! },
+                        {"site", roomidMapSite[RoomID].Site!},  // todo roomid替换为sitename
+                        {"category", Tag.Split('-')[0] },
+                        {"l2Site",  Tag.Split('-')[^1]},
+                        {"timestr", timeStr},
+                        {"costHours", String.Join('|', hours)},
+                        {"averageCurrent",  currents.Average().ToString()},
+                        {"maxCurrent", currents.Max().ToString()},
+                        {"estimateConsumption", estimate.ToString()}
+                    });
+                }
+
+            }
+
+            return result;
+        }
+
 
         /// <summary>
         /// 静态方法: 按照约定的规则生成单个站点的ValidDate数据
@@ -570,7 +678,7 @@ namespace PUMS.Services
             return proportions;
         }
 
-
+        
 
 
     }

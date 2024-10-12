@@ -72,6 +72,9 @@
    ```csharp
    /* 办公营业夜间用电的预警数据, timestr指定具体日期 */
    /api/datas/statistics/nonproductive-alarm/{timestr}
+   
+   /* 二级用电点的预警数据(只返回有二级用电点的数据), timestr指定具体日期 */
+   /api/datas/statistics/l2site-alarm/{timestr}
    ```
 
 10. 报表系统的实时报表数据
@@ -81,4 +84,11 @@
     /api/datas/statistics/sometime
     /*指定时间类型及时刻的各站点CollectData采集数据*/
     /api/datas/statistics/sometime/{dtype}/{timestr}
+    
+    /*实时时刻的二级用电点的采集数据*/
+    /api/datas/statistics/l2site-sometime
+    /*指定时间类型及时刻的二级用电点的采集数据*/
+    /api/datas/statistics/l2site-sometime/{dtype}/{timestr}
+    
+    
     ```

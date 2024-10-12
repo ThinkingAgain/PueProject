@@ -1,11 +1,11 @@
-import {NonproductiveAlarmData} from "../model/ApiData.ts";
+import {Level2SiteAlarmData} from "../model/ApiData.ts";
 import {ProColumns, ProTable} from "@ant-design/pro-components";
 import {fetchData} from "../service/fetch.tsx";
 import {Button} from 'antd'
 import {exportSimpleExcel} from "../service/tools.tsx";
 import {useState} from "react";
 
-const columns: ProColumns<NonproductiveAlarmData>[] = [
+const columns: ProColumns<Level2SiteAlarmData>[] = [
     {
         dataIndex: 'index',
         valueType: 'indexBorder',
@@ -23,6 +23,18 @@ const columns: ProColumns<NonproductiveAlarmData>[] = [
         dataIndex: "site",
         //fixed: "left",
         //width: 150,
+        ellipsis: true,
+        search: false,
+    },
+    {
+        title: '一级类别',
+        dataIndex: "category",
+        ellipsis: true,
+        search: false,
+    },
+    {
+        title: '二级用电点',
+        dataIndex: "l2Site",
         ellipsis: true,
         search: false,
     },
@@ -61,8 +73,8 @@ const columns: ProColumns<NonproductiveAlarmData>[] = [
 
 
 
-export const NonproductiveAlarm = () => {
-    const [data, setData] = useState<NonproductiveAlarmData[] | null>(null);
+export const Level2SiteAlarm = () => {
+    const [data, setData] = useState<Level2SiteAlarmData[] | null>(null);
 
     const onExportExcel = async () => {
         const cols :ExcelHeader[] = columns.map((col) => {
@@ -74,11 +86,11 @@ export const NonproductiveAlarm = () => {
         })
         // 获取数据日期串
         const dateStr = (data === null ? "" : data[0]?.timestr) ?? ""
-        await exportSimpleExcel<NonproductiveAlarmData>(cols, data as NonproductiveAlarmData[], `局站非生产夜间用电预警表${dateStr}.xlsx`);
+        await exportSimpleExcel<Level2SiteAlarmData>(cols, data as Level2SiteAlarmData[], `二级用电点预警表${dateStr}.xlsx`);
     }
     console.log("data", data)
     return (
-        <ProTable<NonproductiveAlarmData>
+        <ProTable<Level2SiteAlarmData>
             columns={columns}
             cardBordered
             //bordered
@@ -86,17 +98,19 @@ export const NonproductiveAlarm = () => {
             request={async (params, sort, filter) => {
                 console.log(params, sort, filter);
                 const {timestr} = params;
-                const apiData = await fetchData<NonproductiveAlarmData[]>(`/api/datas/statistics/nonproductive-alarm/${timestr}`);
+                const apiData = await fetchData<Level2SiteAlarmData[]>(`/api/datas/statistics/l2site-alarm/${timestr}`);
                 //console.log(data[4])
-                apiData.forEach((item) => {
+                const tableData = apiData.filter(d => d.category !== "生产")
+                tableData.forEach((item) => {
                     item.averageCurrent = Math.round(item.averageCurrent * 10) / 10;
                     item.maxCurrent = Math.round(item.maxCurrent * 10) / 10;
                     item.estimateConsumption = Math.round(item.estimateConsumption * 10) / 10;
                 })
-                setData(apiData);
+                //console.log(tableData)
+                setData(tableData);
                 //console.log(data[4])
                 return {
-                    data: apiData,
+                    data: tableData,
                     success: true
                 }
             }}
@@ -108,4 +122,4 @@ export const NonproductiveAlarm = () => {
     )
 }
 
-export default  NonproductiveAlarm
+export default  Level2SiteAlarm

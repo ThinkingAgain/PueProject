@@ -19,7 +19,7 @@ class TestDomain(TestCase):
 
     def test_hourlyProcess_no_data(self):
         hp = HourlyProcess()
-        todo = Todo(timestr="2024-07-22-07", dtype=HOUR, status=UNCOMPLETED)
+        todo = Todo(timestr="2024-10-10-07", dtype=HOUR, status=UNCOMPLETED)
         self.assertEqual(hp.process(todo), NODATA)
 
     def test_gen_hour_current_datas(self):

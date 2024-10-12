@@ -132,9 +132,25 @@ namespace PUMS.Services.Tests
         [TestMethod()]
         public void getCollectDatasByTimestrAsyncTest()
         {
-            
+
             var service = new Service(_context);
             var d = service.getCollectDatasByTimestr(Constants.HOUR, "2024-08-20-10");
+            Assert.IsTrue(1 == 1);
+        }
+
+        [TestMethod()]
+        public void getLevel2SiteNonproductiveAlarmDataTest()
+        {
+            var service = new Service(_context);
+            var d = service.getLevel2SiteAlarmData("2024-10-09");
+            Assert.IsTrue(1 == 1);
+        }
+
+        [TestMethod()]
+        public void getLevel2SiteDatasByTimestrTest()
+        {
+            var service = new Service(_context);
+            var d = service.getLevel2SiteDatasByTimestr(Constants.HOUR, "2024-10-09-10");
             Assert.IsTrue(1 == 1);
         }
     }
