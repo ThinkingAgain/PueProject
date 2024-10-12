@@ -14,16 +14,15 @@ dates = []
 # # 2024-07-01 -> 09
 # for d in range(1, 10):
 #     dates.append(f'2024-07-0{d}')
-# # 2024-07-10 -> 31
-# for d in range(10, 32):
-#     dates.append(f'2024-07-{d}')
-#
-# # 2024-08-01 -> 09
-# for d in range(1, 10):
-#     dates.append(f'2024-08-0{d}')
-# 2024-08-10 -> 12
-for d in range(20, 26):
-    dates.append(f'2024-08-{d}')
+# # 2024-09-24 -> 30
+for d in range(24, 31):
+    dates.append(f'2024-09-{d}')
+
+# # 2024-10-10 -> 10
+for d in range(10, 11):
+    dstr = f'2024-10-0{d}' if d < 10 else f'2024-10-{d}'
+    dates.append(dstr)
+
 
 print(dates)
 

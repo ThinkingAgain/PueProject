@@ -3,3 +3,7 @@ interface ExcelHeader {
     key: string,
     width: number
 }
+
+interface EChartOption {
+    title: string,
+}

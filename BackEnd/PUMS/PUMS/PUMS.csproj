@@ -9,8 +9,10 @@
 
   <ItemGroup>
     <None Include="wwwroot\assets\index-BCZgcY0v.js" />
+    <None Include="wwwroot\assets\index-Cp8w1fI9.js" />
     <None Include="wwwroot\assets\index-Cq8j5qjj.js" />
     <None Include="wwwroot\assets\index-DVhLQwaG.js" />
+    <None Include="wwwroot\assets\index-DyCLm_XI.js" />
     <None Include="wwwroot\assets\index-I_jpTAIs.js" />
     <None Include="wwwroot\assets\index-WTnOMDVp.js" />
   </ItemGroup>

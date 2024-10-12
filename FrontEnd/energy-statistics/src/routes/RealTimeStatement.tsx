@@ -153,7 +153,7 @@ export const RealTimeStatement = () => {
             toolBarRender={() => [
                 <Button type="primary" disabled={!data || data.length === 0}
                         key="out"
-                        onClick={() => exportTwoLevelHeaderExcel<CollectData>(columns, data, "实时报表.xlsx")}>
+                        onClick={() => exportTwoLevelHeaderExcel<CollectData>(columns, data, "站点实时用电量.xlsx")}>
                     导出数据
                 </Button>
             ]}

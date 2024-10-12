@@ -124,6 +124,8 @@ OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n' 
 IGNORE 1 ROWS;
 
+用Navicat导入csv会出现某些字段（如service_center)为null, 可用以下语句将null替换为空字串
+update energy_datas set service_center = ( CASE WHEN IFNULL(service_center,'') = '' THEN '' ELSE service_center END) WHERE service_center is NULL
 
 
 

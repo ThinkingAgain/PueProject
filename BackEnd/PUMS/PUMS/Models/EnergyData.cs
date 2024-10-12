@@ -134,7 +134,7 @@ namespace PUMS.Models
 
         [Display(Name = "营服中心组织")]
         [Column("service_center")]
-        public string? ServiceCenter { get; set; }
+        public string? ServiceCenter { get; set; } 
 
         [Display(Name = "联通物理站址编码")]
         [Column("cucc_site_code")]
@@ -142,7 +142,7 @@ namespace PUMS.Models
 
         [Display(Name = "网格名称")]
         [Column("grid_name")]
-        public string? GridName { get; set; }
+        public string? GridName { get; set; } 
 
         [Display(Name = "责任人联系电话")]
         [Column("responsible_phone2")]

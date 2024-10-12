@@ -164,6 +164,17 @@ namespace PUMS.Controllers
         }
 
         /// <summary>
+        /// 返回"二级用电点夜间用电预警表"数据, 日报表
+        /// </summary>
+        /// <param name="timestr">指定日字符串</param>
+        /// <returns></returns>
+        [HttpGet("statistics/l2site-alarm/{timestr}")]
+        public ActionResult<List<Dictionary<string, string>>> GetLevel2SiteAlarm(string timestr)
+        {
+            return _service.getLevel2SiteAlarmData(timestr);
+        }
+
+        /// <summary>
         /// 返回"实时报表"数据
         /// </summary>
         /// <param name="timestr">指定时刻字串</param>
@@ -174,7 +185,20 @@ namespace PUMS.Controllers
             string? timestr) =>
          _service.getCollectDatasByTimestr(dtype ?? Constants.HOUR, 
                 timestr ?? DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd-HH"));
-        
+
+        /// <summary>
+        /// 返回"二级用电点实时报表"数据
+        /// </summary>
+        /// <param name="timestr">指定时刻字串</param>
+        /// <returns></returns>
+        [HttpGet("statistics/l2site-sometime")]
+        [HttpGet("statistics/l2site-sometime/{dtype}/{timestr}")]
+        public ActionResult<List<Dictionary<string, string>>> GetLevel2SiteRealTableDatas(string? dtype,
+            string? timestr) =>
+         _service.getLevel2SiteDatasByTimestr(dtype ?? Constants.HOUR,
+                timestr ?? DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd-HH"));
+
+
 
 
 

@@ -28,6 +28,29 @@ export type NonproductiveAlarmData = {
     estimateConsumption: number,    // 估算用电度数
 }
 
+// 定义<二级用电点预警表>的数据结构
+export type Level2SiteAlarmData = {
+    County: string,
+    site: string,
+    category: string,
+    l2Site: string,
+    timestr: string,
+    costHours: string,
+    averageCurrent: number,
+    maxCurrent: number,
+    estimateConsumption: number,    // 估算用电度数
+}
+
+// 定义<二级用电点实时报表>的数据结构
+export type Level2SiteRealTimeData = {
+    County: string,
+    site: string,
+    category: string,
+    l2Site: string,
+    timeStr: string,
+    current: number,
+}
+
 // 定义<实时报表>的数据结构
 export type CollectData = {
     siteID: string,
