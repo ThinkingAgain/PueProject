@@ -43,9 +43,12 @@ class SiteRoom(Base):
     site_id: Mapped[str] = mapped_column(String(60), primary_key=True)
     roomid: Mapped[str] = mapped_column(String(60), primary_key=True)
     site: Mapped[str] = mapped_column(String(200))
+    meter_id: Mapped[str] = mapped_column(String(60))
+    county: Mapped[str] = mapped_column(String(200))
 
     def __repr__(self):
-        return f"SiteRoom(site_id={self.site_id}, roomid={self.roomid}, site={self.site})"
+        return (f"SiteRoom(site_id={self.site_id}, roomid={self.roomid}, site={self.site}, "
+                f"meter_id={self.meter_id}, county={self.county})")
 
 
 class CurrentData(Base):

@@ -175,6 +175,17 @@ namespace PUMS.Controllers
         }
 
         /// <summary>
+        /// 临时: 返回"营业用电"数据, 所有
+        /// </summary>
+        /// <param name="timestr"></param>
+        /// <returns></returns>
+        [HttpGet("statistics/business-datas/all")]
+        public ActionResult<List<Dictionary<string, string>>> GetBusinessDataOfHours()
+        {
+            return _service.getBusinessDataOfHours();
+        }
+
+        /// <summary>
         /// 返回"实时报表"数据
         /// </summary>
         /// <param name="timestr">指定时刻字串</param>

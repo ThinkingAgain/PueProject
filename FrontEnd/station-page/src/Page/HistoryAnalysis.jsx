@@ -349,7 +349,7 @@ function HistoryAnalysis() {
             <div className="container-fluid container-bg office-efficiency-index">
                 <div className="row  office-header">
                     <div className="col-sm-12 col-md-12 pd  title-info">
-                        {station.name} <NavLink to='/'>能耗综合分析</NavLink>
+                        {station.name} <NavLink to='/'>能耗监控分析</NavLink>
                     </div>
                     <div className="col-sm-5  col-md-5 pd analysis-info">{energyData.alarm}</div>
                     <div className="col-sm-7  col-md-7 pd analysis-filter">

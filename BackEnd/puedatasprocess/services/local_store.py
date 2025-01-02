@@ -10,6 +10,12 @@ class MysqlService:
     def __init__(self, host: str, user: str, pwd: str, db: str):
         self.engine = create_engine(f'mysql+pymysql://{user}:{pwd}@{host}/{db}?charset=utf8')  #, echo=True)
 
+    def get_site_rooms(self) -> List[SiteRoom]:
+        """从表site_rooms中获取所有的site_rooms列表"""
+        with Session(self.engine) as session:
+            query = select(SiteRoom)
+            return [sr for sr in session.scalars(query)]
+
     def get_rooms(self) -> List[str]:
         """从表site_rooms中获取在用的roomid列表"""
         with Session(self.engine) as session:

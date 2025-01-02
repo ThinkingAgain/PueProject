@@ -116,7 +116,7 @@ namespace PUMS.Services.Tests
         public void getSiteStatementTest()
         {
             var service = new Service(_context);
-            var d = service.getSiteStatement("2024-07");
+            var d = service.getSiteStatement("2024-08");
             Assert.IsTrue(1 == 1);
 
         }
@@ -151,6 +151,14 @@ namespace PUMS.Services.Tests
         {
             var service = new Service(_context);
             var d = service.getLevel2SiteDatasByTimestr(Constants.HOUR, "2024-10-09-10");
+            Assert.IsTrue(1 == 1);
+        }
+
+        [TestMethod()]
+        public void getBusinessDataOfHoursTest()
+        {
+            var service = new Service(_context);
+            var d = service.getBusinessDataOfHours();
             Assert.IsTrue(1 == 1);
         }
     }
