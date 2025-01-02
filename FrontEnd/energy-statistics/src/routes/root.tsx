@@ -15,7 +15,7 @@ const Root = () => {
         <div id="pro-layout" style={{ height: '100vh'}}>
             <ProLayout
                 siderWidth={216}
-                title="能耗综合管理"
+                title="全口径能耗分析"
                 logo="/assets/cliob.jpeg"
                 /*defaultCollapsed={true}
                 breakpoint={false}*/
@@ -27,7 +27,7 @@ const Root = () => {
                         height: '303px',
                     },
                     {
-                        src: '/assets/bglayout2.jpg',
+                        src: '/assets/bglayout2.png',
                         bottom: -68,
                         right: -45,
                         height: '303px',

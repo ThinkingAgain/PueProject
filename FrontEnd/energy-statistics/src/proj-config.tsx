@@ -1,6 +1,6 @@
 import {RouteObject} from "react-router-dom";
 import {
-    ChromeFilled,
+    //ChromeFilled,
     DashboardTwoTone,
     AlertTwoTone,
     ThunderboltTwoTone,
@@ -12,6 +12,7 @@ import RealTimeStatement from "./routes/RealTimeStatement.tsx";
 import CoreSite from "./routes/CoreSite.tsx";
 import Level2SiteAlarm from "./routes/Level2SiteAlarm.tsx";
 import Level2SiteRealTime from "./routes/Level2SiteRealTime.tsx";
+import Business from "./routes/Business.tsx";
 
 export const BrowserRouterConfig: RouteObject[] = [
     {
@@ -40,6 +41,10 @@ export const BrowserRouterConfig: RouteObject[] = [
                     {
                         path: 'sites',
                         element: <Level2SiteAlarm />,
+                    },
+                    {
+                        path: 'business',
+                        element: <Business />,
                     },
                 ],
             },
@@ -106,6 +111,12 @@ export const ProLayoutConfig = {
                         icon: <AlertTwoTone />,
                         component: './ListTableList',
                     },
+                    {
+                        path: 'business',
+                        name: '营业用电',
+                        icon: <AlertTwoTone />,
+                        component: './ListTableList',
+                    },
 
                 ],
 
@@ -132,11 +143,11 @@ export const ProLayoutConfig = {
 
                 ],
             },
-            {
+            /*{
                 path: '/',
                 name: '全量能耗监测大屏',
                 icon: <ChromeFilled />,
-            },
+            },*/
         ],
     },
 

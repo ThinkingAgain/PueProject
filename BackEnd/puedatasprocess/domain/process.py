@@ -14,9 +14,17 @@ def get_month_se_timestr(month_timestr: str) -> tuple[str, str]:
     """
     dt = date.fromisoformat(f'{month_timestr}-01')
     stimestr = dt.strftime("%Y-%m-%d")
-    dt = dt.replace(month=dt.month + 1) - timedelta(days=1)
-    etimestr = dt.strftime("%Y-%m-%d")
+
+    # 确保跳到下个月的第一天
+    next_month = dt + timedelta(days=31)  # 至少跳过一个月
+    next_month_first_day = next_month.replace(day=1)
+
+    # 减去一天得到当月最后一天
+    etimestr = (next_month_first_day - timedelta(days=1)).strftime("%Y-%m-%d")
     return stimestr, etimestr
+    #dt = dt.replace(month=dt.month + 1) - timedelta(days=1)
+    # etimestr = dt.strftime("%Y-%m-%d")
+    #return stimestr, etimestr
 
 
 def calculate_vector_from_point_currents_dict(roomid: str, point_dic: Dict[str, list[float]]) -> [tuple[str, float]]:

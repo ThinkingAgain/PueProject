@@ -85,9 +85,9 @@ namespace PUMS.Services
                 rtd.TagCurrents.TryGetValue(Constants.BUSINESS, out float business);
                 rtd.TagCurrents.TryGetValue(Constants.LEASE, out float lease);
 
-                rtd.Proportions[Constants.PRODUCT] = product / (total - lease);
-                rtd.Proportions[Constants.OFFICE] = office / (total - lease);
-                rtd.Proportions[Constants.BUSINESS] = business / (total - lease);
+                rtd.Proportions[Constants.PRODUCT] = product / total;//(total - lease);
+                rtd.Proportions[Constants.OFFICE] = office / total; //(total - lease);
+                rtd.Proportions[Constants.BUSINESS] = business / total;// (total - lease);
                 rtd.Proportions[Constants.LEASE] = lease / total;
             }
 
@@ -360,15 +360,30 @@ namespace PUMS.Services
         }
 
         /// <summary>
-        /// 获取current_datas中所有有效采集日期的SiteValidDate集合
+        /// 获取current_datas中最近10日有效采集日期的SiteValidDate集合
         /// </summary>
         /// <returns></returns>
         public List<SiteValidDate> getValidDateOfSites()
         {
-           
+
+            // 最近10日的有效月份字串:=========取消此segment就是所有有效日期的
+            var validMonthStr = new List<string>();
+            for (int i = 0; i < 10; i++)
+            {
+                validMonthStr.Add(DateTime.Today.AddDays(-i).ToString("yyyy-MM"));
+            }
+            // 最近10日的有效月份字串:=========取消此segment就是所有有效日期的
+
+
+
             var datas = new List<SiteValidDate>();
             var roomGroup = _context.CurrentDatas
-                .Where(c => c.Category == Constants.VECTOR)
+                .Where(c => c.Category == Constants.VECTOR &&
+
+                //最近10日的有效月份字串:=========取消此segment就是所有有效日期的    
+                validMonthStr.Contains(c.TimeStr.Substring(0,7)))
+                //最近10日的有效月份字串:=========取消此segment就是所有有效日期的
+
                 .GroupBy(c => c.RoomID);
 
             foreach (var g in roomGroup)
@@ -573,6 +588,49 @@ namespace PUMS.Services
 
 
         /// <summary>
+        /// 临时: 返回办公营业的全部用电数据
+        /// </summary>
+        /// <param name="timeStr"></param>
+        /// <returns></returns>
+        public List<Dictionary<string, string>> getBusinessDataOfHours()
+        {
+            //var result = new List<Dictionary<string, string>>();
+
+            // 由timestr生成hourList (从当天22点到次日6点)
+            /*DateTime.TryParseExact(timeStr, _timeStrFormat[Constants.DAY].inputFormat, CultureInfo.InvariantCulture,
+               DateTimeStyles.None, out DateTime ts);
+            var endtime = ts.AddDays(1).AddHours(6);
+            var hourList = new List<string>();
+            for (var t = ts.AddHours(22); t <= endtime; t = t.AddHours(1))
+            {
+                hourList.Add(t.ToString(_timeStrFormat[Constants.HOUR].inputFormat));
+            }
+
+            List<string> nonproductiveTags = [Constants.OFFICE, Constants.BUSINESS];*/
+
+            var roomidMapSite = _context.siteRooms.ToDictionary(s => s.RoomID!, s => s);
+
+            var currentDatas = _context.CurrentDatas
+                .Where(c => c.DType == Constants.HOUR && c.Category == Constants.VECTOR 
+                        && c.Tag == Constants.BUSINESS)
+                .OrderBy(c => c.TimeStr)
+                .Select(c => new Dictionary<string, string>
+                    {
+                        {nameof(SiteRoom.County), roomidMapSite[c.RoomID].County! },
+                        {"site", roomidMapSite[c.RoomID].Site!},  // todo roomid替换为sitename
+                        {"timestr", c.TimeStr},
+                        {"current", c.Current.ToString()}
+                    })
+                .ToList();             
+
+           
+
+            return currentDatas??new List<Dictionary<string, string>>();
+        }
+
+
+
+        /// <summary>
         /// 静态方法: 按照约定的规则生成单个站点的ValidDate数据
         /// </summary>
         /// <param name="roomid"></param>
@@ -662,9 +720,9 @@ namespace PUMS.Services
 
             if (total > 0 && total - lease > 0)
             {
-                proportions[Constants.PRODUCT] = product / (total - lease);
-                proportions[Constants.OFFICE] = office / (total - lease);
-                proportions[Constants.BUSINESS] = business / (total - lease);
+                proportions[Constants.PRODUCT] = product / total; // (total - lease);
+                proportions[Constants.OFFICE] = office / total; // (total - lease);
+                proportions[Constants.BUSINESS] = business / total;// (total - lease);
                 proportions[Constants.LEASE] = lease / total;
             
             }else

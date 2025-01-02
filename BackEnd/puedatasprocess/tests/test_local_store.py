@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from unittest import TestCase
 
 from services.factory import ServicesFactory
@@ -31,3 +32,16 @@ class TestMysqlService(TestCase):
         mss = ServicesFactory().get_mysqlService()
         datas = mss.get_current_datas(HOUR, POINT, '2024-06-23-05', '2024-06-23-11')
         self.assertIsInstance(datas, list)
+
+    def test_get_todos(self):
+        mss = ServicesFactory().get_mysqlService()
+        dt = datetime(2024, 12, 1, 0)
+        datas = mss.get_todos(dt)
+
+        # 定义排序权重
+        dtype_order = {HOUR: 0, DAY: 1, MONTH: 2}
+        # 按 dtype 的自定义顺序排序
+        ordered_datas = sorted(datas, key=lambda todo: dtype_order[todo.dtype])
+
+        self.assertIsInstance(datas, list)
+

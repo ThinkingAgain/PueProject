@@ -28,6 +28,14 @@ export type NonproductiveAlarmData = {
     estimateConsumption: number,    // 估算用电度数
 }
 
+// 临时: 定义<营业用电>的数据结构
+export type BusinessData = {
+    County: string,
+    site: string,
+    timestr: string,
+    current: number,
+}
+
 // 定义<二级用电点预警表>的数据结构
 export type Level2SiteAlarmData = {
     County: string,

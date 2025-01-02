@@ -9,12 +9,22 @@
 
   <ItemGroup>
     <None Include="wwwroot\assets\index-BCZgcY0v.js" />
+    <None Include="wwwroot\assets\index-BoDegDYE.js" />
     <None Include="wwwroot\assets\index-Cp8w1fI9.js" />
     <None Include="wwwroot\assets\index-Cq8j5qjj.js" />
+    <None Include="wwwroot\assets\index-DfRhCo3H.js" />
     <None Include="wwwroot\assets\index-DVhLQwaG.js" />
     <None Include="wwwroot\assets\index-DyCLm_XI.js" />
     <None Include="wwwroot\assets\index-I_jpTAIs.js" />
     <None Include="wwwroot\assets\index-WTnOMDVp.js" />
+    <None Include="wwwroot\static\js\office_efficiency_data.js" />
+    <None Include="wwwroot\static\js\office_efficiency_index.js" />
+    <None Include="wwwroot\static\js\pluginsPackage\bootstrap-3.3.0\bootstrap.js" />
+    <None Include="wwwroot\static\js\pluginsPackage\bootstrap-3.3.0\respond.js" />
+    <None Include="wwwroot\static\js\pluginsPackage\echarts\echarts.min.js" />
+    <None Include="wwwroot\static\js\pluginsPackage\echarts\echarts5.min.js" />
+    <None Include="wwwroot\static\js\pluginsPackage\jquery\jquery.1.11.3.min.js" />
+    <None Include="wwwroot\static\js\pluginsPackage\swiper\swiper.min.js" />
   </ItemGroup>
 
   <ItemGroup>

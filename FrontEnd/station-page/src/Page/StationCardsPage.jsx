@@ -24,7 +24,7 @@ const stationCardsPage = () => {
             <header className="flex flex-col text-center
           justify-center items-center mx-auto pb-16  ">
                 <div className="flex items-center gap-x-4 ">
-                    <h1 className=" text-4xl">全量能耗综合管理系统（一期）</h1>
+                    <h1 className=" text-4xl">全口径能耗监控分析系统（一期）</h1>
                 </div>
             </header>
             <div className="flex flex-row flex-wrap gap-2
